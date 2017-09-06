@@ -1,0 +1,3 @@
+LAMMPS (17 Aug 2017)
+log                ${dname}/log.lammps
+log                data-wall/log.lammps

@@ -1,0 +1,6 @@
+LAMMPS (17 Aug 2017)
+shell              mkdir ${dname}
+shell              mkdir data
+WARNING: Shell command 'mkdir' failed with error 'File exists' (../input.cpp:1264)
+log                ${dname}/log.lammps
+log                data/log.lammps

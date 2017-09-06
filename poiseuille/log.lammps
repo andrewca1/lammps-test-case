@@ -1,0 +1,6 @@
+LAMMPS (17 Aug 2017)
+# create otuput directory
+shell              mkdir ${dname}
+shell              mkdir data
+log                ${dname}/log.lammps
+log                data/log.lammps

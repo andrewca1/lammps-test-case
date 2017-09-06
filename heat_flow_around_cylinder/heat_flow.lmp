@@ -1,0 +1,140 @@
+log                ${dname}/log.lammps
+echo               both
+variable           ndim equal 2
+dimension          ${ndim}
+units              si
+
+# requires a custom version of LAMMPS
+# https://github.com/slitvinov/lammps-sph-multiphase
+# Built with
+# make yes-USER-SPH
+# 
+# See also
+# http://lammps.sandia.gov/doc/Section_start.html#start_3
+atom_style         meso/multiphase
+include            vars.lmp
+boundary          p p p
+# create simulation box
+variable           pLz    equal  ${dx}
+variable           nLz    equal  0
+region             box block 0.0 ${Lx}  0.0 ${Ly} ${nLz} ${pLz} units box
+
+# create box with two types of particles (flow and wall)
+create_box         3 box
+
+# create flow particles
+lattice            sq ${dx}
+create_atoms       ${gr_type} region box
+
+# set high-temp region
+region             left block 0.0 ${Llx} 0.0 ${Ly} ${nLz} ${pLz} units box
+set                region left type ${gl_type}
+region             right block ${Llx} ${Lx} ${Lly} ${Lty} ${nLz} ${pLz} units box
+set                region right type ${gr_type}
+
+# create cylinder
+region             rcylinder cylinder z ${xcenter} ${ycenter} ${cyl_r} EDGE EDGE units box
+set	           region rcylinder type ${d_type}
+group              gcylinder region rcylinder
+group	           flow subtract all gcylinder
+
+# set mass of the particles
+set                group gcylinder meso/rho ${sph_rho}
+set                group gcylinder mass ${sph_mass}
+
+set                region left mass ${mass_l}
+set                region right mass ${mass_r}
+set                region left meso/cv ${cv_l}
+set                region right meso/cv ${cv_r}
+set                region left  meso/e ${e_l}
+set                region right meso/e ${e_r}
+set                region left meso/rho ${rho_l}
+set                region right meso/rho ${rho_r}
+
+set                type ${d_type} meso/rho ${sph_rho}
+set 		   type ${d_type} mass ${sph_mass}
+
+set                type ${gl_type} meso/rho ${rho_l}
+set                type ${gr_type} meso/rho ${rho_r}
+set                type ${gl_type} meso/e ${e_l}
+set                type ${gr_type} meso/e ${e_r}
+set                type ${gl_type} meso/cv ${cv_l}
+set                type ${gr_type} meso/cv ${cv_r}
+set                type ${gl_type} mass ${mass_l}
+set                type ${gr_type} mass ${mass_r}
+
+# do full time integration for all particles
+fix                integrate_fix_full all meso
+
+variable           sph_mu  equal ${sph_eta}/${sph_rho}
+include            settimestep.lmp
+
+comm_modify        vel yes
+set                group all meso/rho ${sph_rho}
+
+pair_style         hybrid/overlay sph/rhosum/multiphase 1 &
+		   sph/taitwater/multiphase sph/heatconduction/phasechange
+pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} ${sph_gamma} ${h} ${sph_rho_background}
+pair_coeff         * * sph/rhosum/multiphase   ${h}
+
+pair_coeff         1 1   sph/heatconduction/phasechange ${k_l} ${h}
+pair_coeff         1 1   sph/rhosum/multiphase ${h}
+variable           klr equal 2*${k_l}*${k_r}/(${k_r}+${k_l})
+pair_coeff         1 2   sph/heatconduction/phasechange ${klr} ${h}
+pair_coeff         1 2   sph/rhosum/multiphase           ${h}
+pair_coeff         2 2   sph/heatconduction/phasechange ${k_r} ${h}
+pair_coeff         2 2   sph/rhosum/multiphase           ${h}
+variable           kld equal 2*${k_l}*${k_d}/(${k_l}+${k_d})
+pair_coeff         1 3   sph/heatconduction/phasechange ${kld} ${h}
+pair_coeff         1 3   sph/rhosum/multiphase           ${h}
+variable           krd equal 2*${k_r}*${k_d}/(${k_r}+${k_d})
+pair_coeff         2 3   sph/heatconduction/phasechange ${krd} ${h}
+pair_coeff         2 3   sph/rhosum/multiphase           ${h}
+pair_coeff         3 3   sph/heatconduction/phasechange ${k_d} ${h}
+pair_coeff         3 3   sph/rhosum/multiphase           ${h}
+
+neighbor           0 bin
+neigh_modify       delay 0 every 1
+
+# compute variable
+compute            rho_peratom all meso/rho/atom
+compute            it_atom all meso/t/atom
+compute            it all reduce sum c_it_atom
+
+# dump               dump_dcd all dcd ${Nfreq} ${dname}/flow.dcd
+# dump_modify        dump_dcd sort id
+
+# dump               dump_xyz all xyz ${Nfreq} ${dname}/flow.xyz
+# dump_modify        dump_xyz element A B
+
+dump               dump_txt all custom ${Nfreq} ${dname}/dump.*.dat id type x y z vx vy vz c_it_atom c_rho_peratom
+dump_modify        dump_txt first yes sort id pad 8
+
+# fix wall particles
+fix                wallim gcylinder setforce 0 0 0
+write_data         ${dname}/flow.dat
+
+variable bodyfx    atom mass*${gx}
+fix      bodyfx_id flow addforce v_bodyfx 0.0 0.0 
+
+variable           time equal step*dt
+thermo_style       custom step v_time
+thermo_style       custom step temp c_it
+thermo             ${Nfreq}
+
+timestep           ${dt}
+if "${ndim}==2" then "fix e2d all enforce2d"
+# run                $(round(${nT}/dt))
+
+# variable           bin_step equal 2.0/${nx}
+variable           bin_step equal 1.0
+variable           rrun equal round(${nT}/${dt})
+
+# end line
+variable           xend equal 0.95*${Lx}
+region             rend block ${xend} ${Lx} 0 ${Ly} EDGE EDGE units box
+group              path2 region rend
+compute cc1 path2 chunk/atom bin/1d y center ${bin_step}
+fix av_vx2 path2 ave/chunk 1 ${rrun} ${rrun} cc1 vx norm sample file ${dname}/vend.av
+
+run                ${rrun}
