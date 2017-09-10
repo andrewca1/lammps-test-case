@@ -10,13 +10,17 @@ atom_style	meso
 boundary        p p p
 
 lattice		sq 0.01
-region		box block 0 100 0 10 0 0.1 
+region		box block 0 1000 0 10 0 0.1 
 create_box	1 box
 create_atoms	1 box
 mass            1 1.0e-5
 
-region          left  block EDGE 49.9  EDGE EDGE EDGE EDGE
-region          right block 50 EDGE EDGE EDGE EDGE EDGE
+variable 	T equal 500.0
+variable        dT equal 2.5e-3
+variable        nrun equal ${T}/${dT}
+
+region          left  block EDGE 499.9  EDGE EDGE EDGE EDGE
+region          right block 500 EDGE EDGE EDGE EDGE EDGE
 set             region left  meso/e 2.0 # internal energies
 set             region right meso/e 1.0
 set             group all meso/rho 0.1 # mesoscopic density is also needed for this pair style
@@ -31,7 +35,7 @@ compute         ie all reduce sum c_ie_atom
 
 thermo		10
 thermo_style    custom step temp c_ie
-timestep        2.5e-3
+timestep        ${dT}
 neighbor	0.2e-2 bin
 fix             integrate_fix all meso
 
@@ -39,17 +43,17 @@ fix             integrate_fix all meso
 velocity        all set 1.0 0.0 0.0
 fix             2d all enforce2d
 
-dump		dump_fix all custom 10 dump.heat id type x y z c_ie_atom
+dump		dump_fix all custom 10 dump_${T}.heat id type x y z c_ie_atom
 dump_modify     dump_fix first yes
-run             1600
+run             ${nrun}
 undump          dump_fix
 
-dump		dump_fix all custom 1 dump.last id type x y z c_ie_atom
+dump		dump_fix all custom 1 dump_${T}.last id type x y z c_ie_atom
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
 
-dump		dump_fix all custom 1 dump.last.xs id type xs ys zs c_ie_atom
+dump		dump_fix all custom 1 dump_${T}.last.xs id type xs ys zs c_ie_atom
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
