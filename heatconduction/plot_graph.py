@@ -34,8 +34,8 @@ for time in T:
     data = np.loadtxt("dump_{}.last".format(time), skiprows=9)
 
     color = next(ax._get_lines.prop_cycler)['color']
-    plt.plot(x, e_analytic, linestyle='', markeredgecolor='none', marker=next(marker), color=color, label="analytical-{}".format(time))
-    plt.plot(data[25:180,2], data[25:180,5], label="sph-{}".format(time), linestyle='-', color=color)
+    plt.plot(data[25:180,2], data[25:180,5], linestyle='', markeredgecolor='none', marker=next(marker), color=color, label="sph-{}".format(time))
+    plt.plot(x, e_analytic, label="analytical-{}".format(time), linestyle='-', color=color)
     
 plt.ylabel("Temperature")
 plt.ylim(0.8, 2.2)
