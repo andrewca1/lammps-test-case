@@ -15,10 +15,14 @@ create_box	1 box
 create_atoms	1 box
 mass            1 1.0e-5
 
+variable        T equal 200.0
+variable        dt equal 0.025
+variable        nrun equal ${T}/${dt}
+
 region          left  block EDGE 49.9  EDGE EDGE EDGE EDGE
 region          right block 50 EDGE EDGE EDGE EDGE EDGE
-set             region left  meso/e 1.0 # internal energies
-set             region right meso/e 2.0
+set             region left  meso/e 2.0 # internal energies
+set             region right meso/e 1.0
 set             group all meso/rho 0.1 # mesoscopic density is also needed for this pair style
 #               For correct temperature profiles, mescoscopic density and mass * number density must coincide!
 
@@ -31,21 +35,21 @@ compute         ie all reduce sum c_ie_atom
 
 thermo		10
 thermo_style    custom step temp c_ie
-timestep        0.25e-1
+timestep        ${dt}
 neighbor	0.2e-2 bin
 fix             integrate_fix all meso/stationary
 
 dump		dump_fix all custom 10 dump.heat id type x y z c_ie_atom
 dump_modify     dump_fix first yes
-run             160
+run             ${nrun}
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump.last id type x y z c_ie_atom
+dump		dump_fix all custom 10 dump_${T}.last id type x y z c_ie_atom
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump.last.xs id type xs ys zs c_ie_atom
+dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs c_ie_atom
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
