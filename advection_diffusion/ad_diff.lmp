@@ -44,12 +44,12 @@ dump_modify     dump_fix first yes
 run             1600
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump.last id type x y z c_ie_atom
+dump		dump_fix all custom 1 dump.last id type x y z c_ie_atom
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump.last.xs id type xs ys zs c_ie_atom
+dump		dump_fix all custom 1 dump.last.xs id type xs ys zs c_ie_atom
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
