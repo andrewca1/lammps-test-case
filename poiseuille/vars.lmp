@@ -1,15 +1,15 @@
 # number of particles in each of the directions
-variable          nx   equal 30
-variable          ny   equal 30
+variable          nx   equal 50
+variable          ny   equal 50
 if "${ndim}==3" then &
 "variable nz equal ${nx}"
 
 # size of the domain
-variable          Ly   equal 2e-3
-variable          Lx   equal 2e-3
+variable          Ly   equal 1.0e-3
+variable          Lx   equal 1.0e-3
 # Create wall region
-variable          ywallt equal 1.8e-3
-variable          ywallb equal 0.2e-3
+variable          ywallt equal 0.99e-3
+variable          ywallb equal 0.02e-3
 
 if "${ndim}==3" then &
 "variable Lz equal ${Lx}"
@@ -28,4 +28,4 @@ variable          Nfreqimage equal 100
 variable          gx equal 1e-4
 variable          sph_mass equal ${dx}^${ndim}*${sph_rho}
 
-variable          T equal 5.0
+variable          T equal 0.8

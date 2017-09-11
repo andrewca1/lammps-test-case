@@ -54,8 +54,9 @@ set                group all meso/rho ${sph_rho}
 set                group all mass ${sph_mass}
 
 # Couette flow
+variable           Vx equal 3.0*${dx}
 velocity           lower set 0.0 0.0 0.0
-velocity           upper set 3.0 0.0 0.0
+velocity           upper set v_Vx 0.0 0.0
 fix                noslip wall setforce 0.0 0.0 0.0
 fix                4 all enforce2d
 
@@ -80,6 +81,6 @@ run              ${rtransient}
 
 # save velocity profile
 compute cc2 flow chunk/atom bin/1d y 0.0 1.0
-fix 1 flow ave/chunk 1 ${rtransient} ${rtransient} cc2 vx vz norm sample file ${dname}/vel.profile
+fix 1 flow ave/chunk 1 ${rtransient} ${rtransient} cc2 vx vz norm sample file ${dname}/vel_${T}.profile
 
 run               ${rtransient}
