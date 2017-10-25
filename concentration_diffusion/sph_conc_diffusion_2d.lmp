@@ -19,8 +19,8 @@ create_box	1 box
 create_atoms 	1 box
 mass            1 1.0e-5
 
-variable        T equal 0.01
-variable        dt equal 0.0001
+variable        T equal 4.0
+variable        dt equal 0.025
 variable        nrun equal ${T}/${dt}
 
 region          left  block EDGE 49.9  EDGE EDGE EDGE EDGE
@@ -28,31 +28,41 @@ region          right block 50 EDGE EDGE EDGE EDGE EDGE
 set             group all meso/rho 0.1 # mesoscopic density is also needed for this pair style
 # For correct temperature profiles, mescoscopic density and mass * number density must coincide!
 
+set             region left  meso/e 2.0 # internal energies
+set             region right meso/e 1.0
+
 # Test adding the new property
 set             region left d_cA 1.0
 set             region right d_cA 0.0
-dump            test all custom 10 dump.test id type x y z d_cA
+# dump            test all custom 10 dump.test id type x y z d_cA
 
-pair_style      sph/concdiffusion
+pair_style      hybrid/overlay sph/concdiffusion sph/heatconduction
 #               i j diffusion coeff. cutoff
-pair_coeff      1 1 1.0e-4     2.0e-2
+pair_coeff      1 1 sph/heatconduction 1.0e-4     2.0e-2
+pair_coeff      1 1 sph/concdiffusion 1.0e-4     2.0e-2
+
+# compute         cA_atom all meso/cA/atom
+# compute         cA all reduce sum c_cA_atom
+
+compute         ie_atom all meso/e/atom
+compute         ie all reduce sum c_ie_atom
 
 timestep        ${dt}
 neighbor	0.2e-2 bin
-# fix             integrate_fix all meso/stationary
+fix             integrate_fix all meso/stationary
 fix 		concentration_fix all meso/concentration
 
-dump		dump_fix all custom 10 dump.heat id type x y z d_cA
+dump		dump_fix all custom 10 dump.heat id type x y z d_cA c_ie_atom
 dump_modify     dump_fix first yes
 run             ${nrun}
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump_${T}.last id type x y z d_cA
+dump		dump_fix all custom 10 dump_${T}.last id type x y z d_cA c_ie_atom
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA
+dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA c_ie_atom
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
