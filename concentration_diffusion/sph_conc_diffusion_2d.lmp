@@ -35,10 +35,10 @@ set             region right meso/e 1.0
 set             region left d_cA 2.0
 set             region right d_cA 1.0
 
-pair_style      hybrid/overlay sph/concdiffusion sph/heatconduction
+pair_style      hybrid/overlay sph/concAdiffusion sph/heatconduction
 #               i j diffusion coeff. cutoff
 pair_coeff      1 1 sph/heatconduction 1.0e-4     2.0e-2
-pair_coeff      1 1 sph/concdiffusion 1.0e-4     2.0e-2
+pair_coeff      1 1 sph/concAdiffusion 1.0e-4     2.0e-2
 
 # compute         cA_atom all meso/cA/atom
 # compute         cA all reduce sum c_cA_atom
@@ -49,7 +49,7 @@ compute         ie all reduce sum c_ie_atom
 timestep        ${dt}
 neighbor	0.2e-2 bin
 fix             integrate_fix all meso/stationary
-fix 		concentration_fix all meso/concentration
+fix 		concentration_fix all meso/concentrationA
 
 dump		dump_fix all custom 10 dump.heat id type x y z d_cA
 dump_modify     dump_fix first yes
