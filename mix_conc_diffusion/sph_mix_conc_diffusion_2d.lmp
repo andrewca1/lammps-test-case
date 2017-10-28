@@ -10,7 +10,7 @@ atom_style	meso
 boundary        f f p # At the moment we only focus on 2D so fixed in x and y
 
 # Adding a new property - need to be added before simulation box
-fix   	        prop all property/atom d_cA d_dcA d_cB d_dcB
+fix   	        prop all property/atom d_cA d_dcA d_cB d_dcB d_cC d_dcC
 
 lattice		sq 0.005
 region		box block 0 100 0 10 0 0.1 
@@ -19,7 +19,7 @@ create_box	1 box
 create_atoms 	1 box
 mass            1 1.0e-5
 
-variable        T equal 20.0
+variable        T equal 500.0
 variable        dt equal 0.025
 variable        nrun equal ${T}/${dt}
 
@@ -33,28 +33,31 @@ set             group all d_cA 0.0
 set             region left d_cA 2.0
 set             group all d_cB 0.0
 set             region right d_cB 2.0
+set             group all d_cC 0.0
 
-pair_style      hybrid/overlay sph/concAdiffusion sph/concBdiffusion
+pair_style      hybrid/overlay sph/concAdiffusion sph/concBdiffusion sph/concCdiffusion
 #               i j diffusion coeff. cutoff
 pair_coeff      1 1 sph/concAdiffusion 1.0e-4     2.0e-2
 pair_coeff      1 1 sph/concBdiffusion 1.0e-4     2.0e-2
+pair_coeff      1 1 sph/concCdiffusion 1.0e-4     2.0e-2
 
 timestep        ${dt}
 neighbor	0.2e-2 bin
 fix 		concA_fix all meso/concentrationA
 fix 		concB_fix all meso/concentrationB
+fix             concC_fix all meso/concentrationC
 
-dump		dump_fix all custom 10 dump.heat id type x y z d_cA d_cB
+dump		dump_fix all custom 10 dump.heat id type x y z d_cA d_cB d_cC
 dump_modify     dump_fix first yes
 run             ${nrun}
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump_${T}.last id type x y z d_cA d_cB
+dump		dump_fix all custom 10 dump_${T}.last id type x y z d_cA d_cB d_cC
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA d_cB
+dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA d_cB d_cC
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
