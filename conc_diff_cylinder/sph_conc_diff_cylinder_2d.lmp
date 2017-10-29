@@ -1,0 +1,67 @@
+# mesoscopic heat conduction
+# heat flow from hot right region to cold left region
+# compare the temperature profile at the end opf the simulation,
+# contained in file dump.last, to analytic solution.
+#
+#
+dimension       2
+units		si
+atom_style	meso
+boundary        f f p # At the moment we only focus on 2D so fixed in x and y
+
+# Adding a new property - need to be added before simulation box
+fix   	        prop all property/atom d_cA d_dcA
+
+lattice		sq 0.005
+region		box block 0 100 0 20 0 0.1
+create_box	2 box
+# create_atoms	1 random 1000 12345 box
+create_atoms 	1 box
+mass            1 1.0e-5
+mass		2 1.0e-5
+
+variable        T equal 50
+variable        dt equal 0.025
+variable        nrun equal ${T}/${dt}
+
+region          inlet block EDGE 9.9  EDGE EDGE EDGE EDGE
+set             atom * meso/rho 0.1 # mesoscopic density is also needed for this pair style
+set             group all type 1
+# For correct temperature profiles, mescoscopic density and mass * number density must coincide!
+
+# create cylinder, no diffusion
+region          rcylinder cylinder z 25 10 4 EDGE EDGE 
+set	        region rcylinder type 2
+
+# Test adding the new property
+set		group all d_cA 0.0
+set             region inlet d_cA 2.0
+
+pair_style      sph/concAdiffusion 
+#               i j diffusion coeff. cutoff
+pair_coeff      1 1 1.0e-4     2.0e-2
+pair_coeff      1 2 0.0     2.0e-2
+pair_coeff      2 2 0.0     2.0e-2
+
+compute         ie_atom all meso/e/atom
+compute         ie all reduce sum c_ie_atom
+
+timestep        ${dt}
+neighbor	0.2e-2 bin
+fix             integrate_fix all meso/stationary
+fix 		concentration_fix all meso/concentrationA
+
+dump		dump_fix all custom 10 dump.heat id type x y z d_cA
+dump_modify     dump_fix first yes
+run             ${nrun}
+undump          dump_fix
+
+dump		dump_fix all custom 10 dump_${T}.last id type x y z d_cA
+dump_modify     dump_fix first yes
+run             0
+undump          dump_fix
+
+dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA
+dump_modify     dump_fix first yes
+run             0
+undump          dump_fix
