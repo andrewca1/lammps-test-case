@@ -19,7 +19,7 @@ create_box	1 box
 create_atoms 	1 box
 mass            1 1.0e-5
 
-variable        T equal 500.0
+variable        T equal 50.0
 variable        dt equal 0.025
 variable        nrun equal ${T}/${dt}
 
