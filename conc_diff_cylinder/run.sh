@@ -3,7 +3,7 @@
 # Change directory to exe
 exedir=/home/qth20/Documents/lammps-sph/lammps/src
 
-lmp=${exedir}/lmp_mpi
+lmp=${exedir}/lmp_serial
 
-mpirun -np 4 ${lmp} -in sph_conc_diff_cylinder_2d.lmp 
+${lmp} -in sph_conc_diff_cylinder_2d.lmp 
 
