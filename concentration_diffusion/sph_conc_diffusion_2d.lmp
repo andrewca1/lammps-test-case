@@ -34,7 +34,7 @@ set             region right d_cA 1.0
 
 pair_style      sph/concAdiffusion
 #               i j diffusion decay constant coeff. cutoff
-pair_coeff      1 1 sph/concAdiffusion 1.0e-4  1.0e-4   2.0e-2
+pair_coeff      1 1 1.0e-4  1.0e-4   2.0e-2
 
 # compute         cA_atom all meso/cA/atom
 # compute         cA all reduce sum c_cA_atom
