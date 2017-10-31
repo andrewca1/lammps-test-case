@@ -19,33 +19,31 @@ create_box	1 box
 create_atoms 	1 box
 mass            1 1.0e-5
 
-variable        T equal 50.0
+variable        T equal 4.0
 variable        dt equal 0.025
 variable        nrun equal ${T}/${dt}
 
-region          left  block EDGE 19.9  EDGE EDGE EDGE EDGE
-region          right block 80 EDGE EDGE EDGE EDGE EDGE
+region          left  block EDGE 49.9  EDGE EDGE EDGE EDGE
+region          right block 50 EDGE EDGE EDGE EDGE EDGE
 set             group all meso/rho 0.1 # mesoscopic density is also needed for this pair style
 # For correct temperature profiles, mescoscopic density and mass * number density must coincide!
 
 # Test adding the new property
-set             group all d_cA 0.0
-set             region left d_cA 2.0
-set             group all d_cB 0.0
-set             region right d_cB 2.0
-set             group all d_cC 0.0
+set             group all d_cA 2.0
+set		group all d_cB 2.0
+set		group all d_cC 0.0
 
-pair_style      hybrid/overlay sph/concAdiffusion sph/concBdiffusion sph/concCdiffusion
-#               i j diffusion coeff. cutoff
-pair_coeff      1 1 sph/concAdiffusion 1.0e-4     2.0e-2
-pair_coeff      1 1 sph/concBdiffusion 1.0e-4     2.0e-2
-pair_coeff      1 1 sph/concCdiffusion 1.0e-4     2.0e-2
+pair_style      hybrid/overlay sph/concAreactiondiffusion sph/concBreactiondiffusion sph/concCreactiondiffusion
+#               i j diffusion decay coeff. cutoff
+pair_coeff      1 1 sph/concAreactiondiffusion 0.0e-4 50.0e-4   2.0e-2
+pair_coeff      1 1 sph/concBreactiondiffusion 0.0e-4 50.0e-4   2.0e-2
+pair_coeff      1 1 sph/concCreactiondiffusion 0.0e-4 50.0e-4   2.0e-2
 
 timestep        ${dt}
 neighbor	0.2e-2 bin
 fix 		concA_fix all meso/concentrationA
 fix 		concB_fix all meso/concentrationB
-fix             concC_fix all meso/concentrationC
+fix 		concC_fix all meso/concentrationC
 
 dump		dump_fix all custom 10 dump.heat id type x y z d_cA d_cB d_cC
 dump_modify     dump_fix first yes
