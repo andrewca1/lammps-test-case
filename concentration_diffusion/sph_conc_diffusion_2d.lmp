@@ -28,23 +28,16 @@ region          right block 50 EDGE EDGE EDGE EDGE EDGE
 set             group all meso/rho 0.1 # mesoscopic density is also needed for this pair style
 # For correct temperature profiles, mescoscopic density and mass * number density must coincide!
 
-set             region left  meso/e 2.0 # internal energies
-set             region right meso/e 1.0
-
 # Test adding the new property
 set             region left d_cA 2.0
 set             region right d_cA 1.0
 
-pair_style      hybrid/overlay sph/concAdiffusion sph/heatconduction
-#               i j diffusion coeff. cutoff
-pair_coeff      1 1 sph/heatconduction 1.0e-4     2.0e-2
-pair_coeff      1 1 sph/concAdiffusion 1.0e-4     2.0e-2
+pair_style      sph/concAdiffusion
+#               i j diffusion decay constant coeff. cutoff
+pair_coeff      1 1 sph/concAdiffusion 1.0e-4  1.0e-4   2.0e-2
 
 # compute         cA_atom all meso/cA/atom
 # compute         cA all reduce sum c_cA_atom
-
-compute         ie_atom all meso/e/atom
-compute         ie all reduce sum c_ie_atom
 
 timestep        ${dt}
 neighbor	0.2e-2 bin
