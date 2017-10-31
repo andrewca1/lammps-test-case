@@ -19,7 +19,7 @@ create_box	1 box
 create_atoms 	1 box
 mass            1 1.0e-5
 
-variable        T equal 4.0
+variable        T equal 50.0
 variable        dt equal 0.025
 variable        nrun equal ${T}/${dt}
 
@@ -33,8 +33,8 @@ set             region left d_cA 2.0
 set             region right d_cA 1.0
 
 pair_style      sph/concAdiffusion
-#               i j diffusion decay constant coeff. cutoff
-pair_coeff      1 1 1.0e-4  1.0e-4   2.0e-2
+#               i j diffusion decay coeff. cutoff
+pair_coeff      1 1 	      1.0e-4 5.0e-4   2.0e-2
 
 # compute         cA_atom all meso/cA/atom
 # compute         cA all reduce sum c_cA_atom

@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import itertools
 
 # parameters
-alpha = 15.0e-4
+alpha = 1.0e-4
+K = 5.0e-4
 el    = 2.0
 er    = 1.0
 
@@ -14,7 +15,7 @@ Lx = 1.0
 xc = 0.5*Lx
 
 # Time series
-T = [4, 10, 20]
+T = [4, 50]
 
 # plot
 plt.figure(figsize=(16, 9))
@@ -27,8 +28,9 @@ marker = itertools.cycle(('o', 'v', '^', '<', '>', 's', '8', 'p'))
 for time in T:
     # analytical solution
     x = np.linspace(0.0, 1.0, 100)
-    e_analytic = 0.5*(er + el) + 0.5*(er - el)*special.erf((x-xc)/np.sqrt(4*alpha*time))
-
+    e_analytic = 0.5*(el+er) + 0.5*(er - el)*special.erf((x-xc)/np.sqrt(4*alpha*time))
+    e_analytic = np.exp(-K*time)*e_analytic
+    
     # read data from output
     data = np.loadtxt("dump_{}.last.xs".format(time), skiprows=9)
 
