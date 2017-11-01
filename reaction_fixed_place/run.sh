@@ -8,5 +8,5 @@ mkdir -p ${dname}
 
 lmp=${exedir}/lmp_serial
 
-${lmp} -in sph_mix_conc_diffusion_2d.lmp -var dname ${dname}
+${lmp} -in sph_reaction_fixed_place_2d.lmp -var dname ${dname}
 
