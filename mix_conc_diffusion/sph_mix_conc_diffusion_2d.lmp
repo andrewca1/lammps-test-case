@@ -19,7 +19,7 @@ create_box	1 box
 create_atoms 	1 box
 mass            1 1.0e-5
 
-variable        T equal 4.0
+variable        T equal 25.0
 variable        dt equal 0.025
 variable        nrun equal ${T}/${dt}
 
@@ -29,8 +29,8 @@ set             group all meso/rho 0.1 # mesoscopic density is also needed for t
 # For correct temperature profiles, mescoscopic density and mass * number density must coincide!
 
 # Test adding the new property
-set             group all d_cA 2.0
-set		group all d_cB 2.0
+set             group all d_cA 8.0
+set		group all d_cB 5.0
 set		group all d_cC 0.0
 
 pair_style      hybrid/overlay sph/concAreactiondiffusion sph/concBreactiondiffusion sph/concCreactiondiffusion
@@ -45,17 +45,7 @@ fix 		concA_fix all meso/concentrationA
 fix 		concB_fix all meso/concentrationB
 fix 		concC_fix all meso/concentrationC
 
-dump		dump_fix all custom 10 dump.heat id type x y z d_cA d_cB d_cC
+dump		dump_fix all custom 1 ${dname}/dump*.dat id type x y z d_cA d_cB d_cC
 dump_modify     dump_fix first yes
 run             ${nrun}
-undump          dump_fix
-
-dump		dump_fix all custom 10 dump_${T}.last id type x y z d_cA d_cB d_cC
-dump_modify     dump_fix first yes
-run             0
-undump          dump_fix
-
-dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA d_cB d_cC
-dump_modify     dump_fix first yes
-run             0
 undump          dump_fix
