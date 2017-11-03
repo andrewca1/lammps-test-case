@@ -52,19 +52,19 @@ set             region rcylinder d_cA 0.0
 set             region rcylinder d_cB 0.0
 set             region rcylinder d_cC 0.0
 
-pair_style      hybrid/overlay sph/concAdiffusion sph/concBdiffusion sph/concCdiffusion
-#               i j diffusion coeff. cutoff
-pair_coeff      1 1 sph/concAdiffusion 1.0e-4     2.0e-2
-pair_coeff      1 2 sph/concAdiffusion 0.0     2.0e-2
-pair_coeff      2 2 sph/concAdiffusion 0.0     2.0e-2
+pair_style      hybrid/overlay sph/concAreactiondiffusion sph/concBreactiondiffusion sph/concCreactiondiffusion
+#               i j diffusion decay coeff. cutoff
+pair_coeff      1 1 sph/concAreactiondiffusion 1.0e-4 100.0e-4   2.0e-2
+pair_coeff      1 1 sph/concBreactiondiffusion 1.0e-4 100.0e-4   2.0e-2
+pair_coeff      1 1 sph/concCreactiondiffusion 1.0e-4 100.0e-4   2.0e-2
 
-pair_coeff      1 1 sph/concBdiffusion 1.0e-4     2.0e-2
-pair_coeff      1 2 sph/concBdiffusion 0.0     2.0e-2
-pair_coeff      2 2 sph/concBdiffusion 0.0     2.0e-2
+pair_coeff      1 2 sph/concAreactiondiffusion 0.0 0.0  2.0e-2
+pair_coeff      2 2 sph/concAreactiondiffusion 0.0 0.0  2.0e-2
+pair_coeff      1 2 sph/concBreactiondiffusion 0.0 0.0  2.0e-2
+pair_coeff      2 2 sph/concBreactiondiffusion 0.0 0.0  2.0e-2
+pair_coeff      1 2 sph/concCreactiondiffusion 0.0 0.0  2.0e-2
+pair_coeff      2 2 sph/concCreactiondiffusion 0.0 0.0  2.0e-2
 
-pair_coeff      1 1 sph/concCdiffusion 1.0e-4     2.0e-2
-pair_coeff      1 2 sph/concCdiffusion 0.0     2.0e-2
-pair_coeff      2 2 sph/concCdiffusion 0.0     2.0e-2
 
 timestep        ${dt}
 neighbor	0.2e-2 bin
