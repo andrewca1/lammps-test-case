@@ -7,10 +7,10 @@
 dimension       2
 units		si
 atom_style	meso
-boundary        f f p # At the moment we only focus on 2D so fixed in x and y
+boundary        p p p # At the moment we only focus on 2D so fixed in x and y
 
 # Adding a new property - need to be added before simulation box
-fix   	        prop all property/atom d_cA d_dcA
+fix   	        prop all property/atom d_cA d_dcA ghost yes
 
 lattice		sq 0.005
 region		box block 0 100 0 10 0 0.1 
@@ -19,7 +19,7 @@ create_box	1 box
 create_atoms 	1 box
 mass            1 1.0e-5
 
-variable        T equal 50.0
+variable        T equal 10.0
 variable        dt equal 0.025
 variable        nrun equal ${T}/${dt}
 
