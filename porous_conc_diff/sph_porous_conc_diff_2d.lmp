@@ -8,6 +8,7 @@ dimension       2
 units		si
 atom_style	meso
 boundary        f f p # At the moment we only focus on 2D so fixed in x and y
+include 	vars.lmp
 
 # Adding a new property - need to be added before simulation box
 fix   	        prop all property/atom d_cA d_dcA d_cB d_dcB d_cC d_dcC
@@ -20,7 +21,7 @@ create_atoms 	1 box
 mass            1 1.0e-5
 mass		2 1.0e-5
 
-variable        T equal 50.0
+variable        T equal 25.0
 variable        dt equal 0.025
 variable        nrun equal ${T}/${dt}
 
@@ -54,10 +55,11 @@ set             region rcylinder d_cC 0.0
 
 pair_style      hybrid/overlay sph/concAreactiondiffusion sph/concBreactiondiffusion sph/concCreactiondiffusion
 #               i j diffusion decay coeff. cutoff
-pair_coeff      1 1 sph/concAreactiondiffusion 1.0e-4 100.0e-4   2.0e-2
-pair_coeff      1 1 sph/concBreactiondiffusion 1.0e-4 100.0e-4   2.0e-2
-pair_coeff      1 1 sph/concCreactiondiffusion 1.0e-4 100.0e-4   2.0e-2
+pair_coeff      1 1 sph/concAreactiondiffusion ${dA} ${k}   2.0e-2
+pair_coeff      1 1 sph/concBreactiondiffusion ${dB} ${k}   2.0e-2
+pair_coeff      1 1 sph/concCreactiondiffusion ${dC} ${k}   2.0e-2
 
+# Zero reacting with solid
 pair_coeff      1 2 sph/concAreactiondiffusion 0.0 0.0  2.0e-2
 pair_coeff      2 2 sph/concAreactiondiffusion 0.0 0.0  2.0e-2
 pair_coeff      1 2 sph/concBreactiondiffusion 0.0 0.0  2.0e-2
@@ -77,12 +79,12 @@ dump_modify     dump_fix first yes
 run             ${nrun}
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump_${T}.last id type x y z d_cA d_cB d_cC
+dump		dump_fix all custom 10 dump.last id type x y z d_cA d_cB d_cC
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
 
-dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA d_cB d_cC
+dump		dump_fix all custom 10 dump.last.xs id type xs ys zs d_cA d_cB d_cC
 dump_modify     dump_fix first yes
 run             0
 undump          dump_fix
