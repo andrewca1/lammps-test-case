@@ -1,0 +1,62 @@
+# mesoscopic heat conduction
+# heat flow from hot right region to cold left region
+# compare the temperature profile at the end opf the simulation,
+# contained in file dump.last, to analytic solution.
+#
+#
+dimension       2
+units		si
+atom_style	meso/multiphase
+boundary        p p p 
+
+# Adding a new property - need to be added before simulation box
+fix   	        prop all property/atom d_cA d_dcA ghost yes
+
+variable        dt equal 0.01
+variable 	T equal 10.0
+variable 	nrun equal ${T}/${dt}
+
+variable        dx equal 0.02
+variable        h equal 3*${dx}
+variable 	rho_r equal 1000.0
+variable 	rho_l equal 1.226
+variable        mass_l equal ${rho_l}*${dx}^2
+variable        mass_r equal ${rho_r}*${dx}^2
+
+lattice		sq ${dx} origin 0.5 0.5 0
+region		box block 0 1.0 0 1.0 0 ${dx} units box
+create_box	2 box
+create_atoms 	1 box
+
+region          left  block EDGE 0.5 EDGE EDGE EDGE EDGE units box
+region          right block 0.5 EDGE EDGE EDGE EDGE EDGE units box
+
+# Setting the properties for the region
+set	        region left meso/rho ${rho_l}
+set		region right meso/rho ${rho_r}
+set	        region left mass ${mass_l}
+set		region right mass ${mass_r}
+set             region left d_cA 2.0
+set             region right d_cA 1.0
+set		atom * d_dcA 0.0
+
+pair_style      sph/concAdiffusion
+#               i j diffusion decay coeff. cutoff
+pair_coeff      1 1 	      0.01 0.0 ${h}
+pair_coeff      1 2 	      0.05 0.0 ${h}
+pair_coeff      2 2 	      0.10 0.0 ${h}
+
+timestep        ${dt}
+neighbor	0 bin
+fix             integrate_fix all meso/stationary
+fix 		concentration_fix all meso/concentrationA
+
+dump		dump_fix all custom 10 dump.heat id type x y z d_cA
+dump_modify     dump_fix first yes
+run             ${nrun}
+undump          dump_fix
+
+dump		dump_fix all custom 10 dump_${T}.last id type xs ys zs d_cA
+dump_modify     dump_fix first yes
+run             0
+undump          dump_fix
