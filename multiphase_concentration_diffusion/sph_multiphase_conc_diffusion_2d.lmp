@@ -40,7 +40,7 @@ set             region left d_cA 2.0
 set             region right d_cA 1.0
 set		atom * d_dcA 0.0
 
-pair_style      sph/concAdiffusion
+pair_style      sph/concAdiffusion/multiphase
 #               i j diffusion decay coeff. cutoff
 pair_coeff      1 1 	      0.01 0.0 ${h}
 pair_coeff      1 2 	      0.05 0.0 ${h}
