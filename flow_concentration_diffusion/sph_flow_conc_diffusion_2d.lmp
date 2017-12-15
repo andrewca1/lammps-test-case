@@ -33,6 +33,8 @@ create_atoms       1 region box
 region             top block 0.0 ${Lx} ${ywallt} ${Ly} ${nLz} ${pLz} units box
 group              upper region top
 region             bottom block 0.0 ${Lx} 0.0 ${ywallb} ${nLz} ${pLz} units box
+region		   left block 0.0 ${xmid} ${ywallb} ${ywallt} ${nLz} ${pLz} units box
+region		   right block ${xmid} ${Lx} ${ywallb} ${ywallt} ${nLz} ${pLz} units box
 group              lower region bottom
 group              wall union lower upper
 group              flow subtract all wall
@@ -42,9 +44,6 @@ set                group upper type 3
 
 # do full time integration for all particles
 fix                integrate_fix_full all meso
-
-dump               dump_id all custom ${Nfreq} ${dname}/dump*.dat id type x y z vx vy vz
-dump_modify        dump_id first yes sort id pad 8
 
 variable           sph_mu  equal ${sph_eta}/${sph_rho}
 include            settimestep.lmp
@@ -56,38 +55,37 @@ comm_modify        vel yes
 set                group all meso/rho ${sph_rho}
 set                group all mass ${sph_mass}
 
+# Concentration set
+set		atom * d_dcA 0.0
+set 		region left d_cA ${cA_l}
+set 		region right d_cA ${cA_r}
+fix 		concentration_fix all meso/concentrationA
+
 # Couette flow
 variable           Vx equal 3.0*${dx}
 velocity           lower set 0.0 0.0 0.0
 velocity           upper set v_Vx 0.0 0.0
+
 fix                noslip wall setforce 0.0 0.0 0.0
 fix                4 all enforce2d
 
-# # Poiseuille flow
-# velocity             wall set 0.0 0.0 0.0
-# fix                  noslip lower setforce 0.0 0.0 0.0
-# fix                  4 upper setforce 0.0 0.0 0.0
-# variable             bodyfx atom mass*${gx}
-# fix                  pressure flow addforce v_bodyfx 0.0 0.0
-# fix                  7 all enforce2d
-
-set		atom * d_dcA 0.0
-set		atom * d_cA 0.0
-
 # Pair force style
-pair_style         hybrid/overlay sph/rhosum/multiphase 1  sph/taitwater/multiphase sph/concAdiffusion
+pair_style         hybrid/overlay sph/rhosum/multiphase 1  sph/taitwater/multiphase sph/concAdiffusion/multiphase
 pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} 1.0 ${h} 0.0
 pair_coeff         * * sph/rhosum/multiphase   ${h}
-pair_coeff         * * sph/concAdiffusion 1e-8 1e-8 ${h}
+pair_coeff         1 1 sph/concAdiffusion/multiphase 1.0e-4 0.0 ${h}
+pair_coeff         1 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff         1 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff         2 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff         2 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff         3 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
 
 timestep           ${dt}
 
 variable         rtransient equal round(${T}/${dt})
 if "${ndim}==2" then "fix e2d all enforce2d"
+
+dump               dump_id all custom ${Nfreq} ${dname}/dump*.dat id type x y z vx vy vz d_cA
+dump_modify        dump_id first yes sort id pad 8
+
 run              ${rtransient}
-
-# save velocity profile
-compute cc2 flow chunk/atom bin/1d y 0.0 1.0
-fix 1 flow ave/chunk 1 ${rtransient} ${rtransient} cc2 vx vz norm sample file ${dname}/vel_${T}.profile
-
-run               ${rtransient}

@@ -7,9 +7,10 @@ if "${ndim}==3" then &
 # size of the domain
 variable          Ly   equal 1.0e-3
 variable          Lx   equal 1.0e-3
+variable	  xmid equal 0.5*${Lx}
 # Create wall region
-variable          ywallt equal 0.99e-3
-variable          ywallb equal 0.02e-3
+variable          ywallt equal 0.99*${Lx}
+variable          ywallb equal 0.02*${Lx}
 
 if "${ndim}==3" then &
 "variable Lz equal ${Lx}"
@@ -17,15 +18,18 @@ variable          dy   equal  ${Ly}/${ny}
 variable          dx   equal  ${Lx}/${nx}
 
 # density
-variable          sph_rho equal 1e3
+variable          sph_rho equal 1.0
 variable          sph_c equal 1.25e-4
 variable          sph_eta equal 1e-3
 
+variable 	  cA_l equal 2.0
+variable	  cA_r equal 1.0
+
 variable          h equal 3.0*${dx}
 variable          Nfreq equal 100
-variable          Nfreqimage equal 100
+variable          Nfreqimage equal 10
 
 variable          gx equal 1e-4
 variable          sph_mass equal ${dx}^${ndim}*${sph_rho}
 
-variable          T equal 0.0001
+variable          T equal 0.001
