@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import itertools
 
 # parameters
-alpha = 1.0e-3
-K = 0.0
+alpha = 1.0e-4
+K = 1.0e-4
 el    = 2.0
 er    = 1.0
 
@@ -15,7 +15,7 @@ Lx = 1.0
 xc = 0.5*Lx
 
 # Time series
-T = [10]
+T = [100]
 
 # plot
 plt.figure(figsize=(16, 9))
