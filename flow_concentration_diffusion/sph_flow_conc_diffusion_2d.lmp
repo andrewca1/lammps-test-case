@@ -88,16 +88,6 @@ pair_coeff	   3 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
 pair_coeff         * * sph/rhosum/multiphase   ${h}
 pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} 1.0 ${h} 0.0
 
-# pair_style         hybrid/overlay sph/rhosum/multiphase 1  sph/taitwater/multiphase sph/concAdiffusion/multiphase
-# pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} 1.0 ${h} 0.0
-# pair_coeff         * * sph/rhosum/multiphase   ${h}
-# pair_coeff         1 1 sph/concAdiffusion/multiphase 100.0 0.0 ${h}
-# pair_coeff         1 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-# pair_coeff         1 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-# pair_coeff         2 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-# pair_coeff         2 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-# pair_coeff         3 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-
 timestep           ${dt}
 
 variable         rtransient equal round(${T}/${dt})
