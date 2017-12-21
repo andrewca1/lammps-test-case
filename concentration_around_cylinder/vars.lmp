@@ -19,8 +19,6 @@ variable	  xconc2 equal 0.3*${Lx}
 variable 	  yconc1 equal 0.4*${Ly}
 variable	  yconc2 equal 0.6*${Ly}
 
-# variable          sph_rho equal 1e3
-# variable          sph_rho_background equal 1.0
 variable          sph_rho equal 1.0
 variable          sph_rho_background equal 1.0e-3
 
@@ -28,25 +26,22 @@ variable          sph_rho_background equal 1.0e-3
 variable          sph_gamma equal 1
 
 # sound speed
-# variable          sph_c equal 5.77e-4
 variable          sph_c equal 1.0e-2
 
 # viscosity
-# variable          sph_eta equal 1e-3
-variable          sph_eta equal 2e-5
+variable          sph_eta equal 2.0e-5
 
 variable          h equal 3*${dx}
-variable          Nfreq equal 50
+variable          Nfreq equal 10
 
 # mass of one sph particles
-# variable          sph_mass equal ${dx}^${ndim}*${sph_rho}
-# variable 	    sph_mass equal 1.0
+variable          sph_mass equal ${dx}^${ndim}*${sph_rho}
 
 # radios of the cylinder
 variable          cyl_r equal 2e-2
 
 # body force
-variable          gx    equal 5.0e-10
+variable          gx    equal 5.0e-5
 
 # type of the flow particles
 variable          g_type equal 1

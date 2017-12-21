@@ -57,28 +57,36 @@ set                group all mass ${sph_mass}
 
 # Concentration set
 set		atom * d_dcA 0.0
+set		atom * d_cA 0.0
 set 		region left d_cA ${cA_l}
 set 		region right d_cA ${cA_r}
 fix 		concentration_fix all meso/concentrationA
 
-# Couette flow
-variable           Vx equal 3.0*${dx}
-velocity           lower set 0.0 0.0 0.0
-velocity           upper set v_Vx 0.0 0.0
+# # Couette flow
+# variable           Vx equal 3.0*${dx}
+# velocity           lower set 0.0 0.0 0.0
+# velocity           upper set v_Vx 0.0 0.0
+# fix                noslip wall setforce 0.0 0.0 0.0
+# fix                4 all enforce2d
 
-fix                noslip wall setforce 0.0 0.0 0.0
-fix                4 all enforce2d
+# Poiseuille flow
+velocity             wall set 0.0 0.0 0.0
+fix                  noslip lower setforce 0.0 0.0 0.0
+fix                  4 upper setforce 0.0 0.0 0.0
+variable             bodyfx atom mass*${gx}
+fix                  pressure flow addforce v_bodyfx 0.0 0.0
+fix                  7 all enforce2d
 
 # Pair force style
-pair_style         hybrid/overlay sph/rhosum/multiphase 1  sph/taitwater/multiphase sph/concAdiffusion/multiphase
-pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} 1.0 ${h} 0.0
+pair_style         hybrid/overlay sph/concAdiffusion/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
+pair_coeff	   1 1 sph/concAdiffusion/multiphase 1.0e-4 0.0 ${h}
+pair_coeff	   1 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff	   1 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff	   2 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff	   2 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff	   3 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
 pair_coeff         * * sph/rhosum/multiphase   ${h}
-pair_coeff         1 1 sph/concAdiffusion/multiphase 1.0e-4 0.0 ${h}
-pair_coeff         1 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-pair_coeff         1 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-pair_coeff         2 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-pair_coeff         2 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-pair_coeff         3 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} 1.0 ${h} 0.0
 
 timestep           ${dt}
 
