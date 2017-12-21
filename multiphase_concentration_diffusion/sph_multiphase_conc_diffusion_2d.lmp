@@ -10,7 +10,7 @@ atom_style	meso/multiphase
 boundary        f p p 
 
 # Adding a new property - need to be added before simulation box
-fix   	        prop all property/atom d_cA d_dcA ghost yes
+fix   	        prop all property/atom d_cA d_dcA d_DA ghost yes
 
 variable        dt equal 0.01
 variable 	T equal 100.0
@@ -39,14 +39,15 @@ set		region right mass ${mass_r}
 set             region left d_cA 2.0
 set             region right d_cA 1.0
 set		atom * d_dcA 0.0
+set		atom * d_DA 1.0e-4 # diffusion coefficient
 
 pair_style      sph/concAdiffusion/multiphase
-#               i j diffusion decay coeff. cutoff
+#               i j cutoff
 # There seems to be problem with large value of either constants
 # TODO: Figure it out
-pair_coeff      1 1 	      1.0e-4 1.0e-4 ${h}
-pair_coeff      1 2 	      1.0e-4 1.0e-4 ${h}
-pair_coeff      2 2 	      1.0e-4 1.0e-4 ${h}
+pair_coeff      1 1 	      ${h}
+pair_coeff      1 2 	      ${h}
+pair_coeff      2 2 	      ${h}
 
 timestep        ${dt}
 neighbor	0 bin

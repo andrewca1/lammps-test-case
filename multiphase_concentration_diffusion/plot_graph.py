@@ -5,7 +5,7 @@ import itertools
 
 # parameters
 alpha = 1.0e-4
-K = 1.0e-4
+K = 0.0e-4
 el    = 2.0
 er    = 1.0
 
