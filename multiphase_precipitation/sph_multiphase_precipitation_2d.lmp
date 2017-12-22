@@ -7,22 +7,23 @@
 dimension       2
 units		si
 atom_style	meso/multiphase
-boundary        f p p 
+boundary        f f p 
 
 # Adding a new property - need to be added before simulation box
-fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_dmA ghost yes
+fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_dmA d_mA d_mAthres ghost yes
 
 variable        dt equal 0.01
-variable 	T equal 50.0
+variable 	T equal 20.0
 variable 	nrun equal ${T}/${dt}
 
 variable        dx equal 0.02
-variable        h equal 5*${dx}
-variable	d equal 0.2*${h}
+variable        h equal 3*${dx}
+variable	d equal 0.5*${h}
 variable 	rho_r equal 1.0
 variable 	rho_l equal 1.0
 variable        mass_l equal ${rho_l}*${dx}^2
-variable        mass_r equal ${rho_r}*${dx}^2
+variable        mass_r equal 2.0*${rho_r}*${dx}^2
+variable	mass_thres equal 2.0*${mass_l}
 
 lattice		sq ${dx} origin 0.5 0.5 0
 region		box block 0 1.0 0 1.0 0 ${dx} units box
@@ -39,14 +40,18 @@ set		region right type 2 # solid
 set	        region left meso/rho ${rho_l}
 set		region right meso/rho ${rho_r}
 set	        region left mass ${mass_l}
+set		region left d_mA ${mass_l}
 set		region right mass ${mass_r}
+set		region right d_mA ${mass_r}
 
 set             region left d_cA 2.0
 set             region right d_cA 1.0
 set		atom * d_dcA 0.0
+set		atom * d_dmA 0.0
 set		atom * d_DA 1.0e-4 # diffusion coefficient
 set		atom * d_cAeq 0.5 # equilibrium concentration
-set		atom * d_RA 0.1 # Interacting between solid and liquid
+set		atom * d_RA 10.0 # Interacting between solid and liquid
+set		atom * d_mAthres ${mass_thres}
 
 pair_style      sph/concAprecipitation/multiphase
 #               i j cutoff
@@ -57,9 +62,9 @@ pair_coeff      * * 	      ${h} ${d}
 timestep        ${dt}
 neighbor	0 bin
 fix             integrate_fix all meso/stationary
-fix 		concentration_fix all meso/concentrationA
+fix 		precipitation_fix all meso/precipitationA
 
-dump		dump_fix all custom 10 dump.heat id type x y z d_cA
+dump		dump_fix all custom 10 dump.heat id type x y z d_cA d_mA
 dump_modify     dump_fix first yes
 run             ${nrun}
 undump          dump_fix

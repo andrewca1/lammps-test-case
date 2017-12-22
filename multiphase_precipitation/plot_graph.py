@@ -15,7 +15,7 @@ Lx = 1.0
 xc = 0.5*Lx
 
 # Time series
-T = [50]
+T = [20]
 
 # plot
 plt.figure(figsize=(16, 9))
