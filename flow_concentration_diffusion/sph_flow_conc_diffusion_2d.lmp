@@ -18,7 +18,7 @@ include           vars.lmp
 
 # 2D flow poiseulle
 # Adding a new property - need to be added before simulation box
-fix   	        prop all property/atom d_cA d_dcA ghost yes
+fix   	        prop all property/atom d_cA d_dcA d_DA ghost yes
 
 # create simulation box and 3 types of particles
 variable           pLz    equal  ${dx}
@@ -58,6 +58,7 @@ set                group all mass ${sph_mass}
 # Concentration set
 set		atom * d_dcA 0.0
 set		atom * d_cA 0.0
+set		atom * d_DA 1.0e-4 # diffusion coefficient
 set 		region left d_cA ${cA_l}
 set 		region right d_cA ${cA_r}
 fix 		concentration_fix all meso/concentrationA
@@ -79,12 +80,12 @@ fix                  7 all enforce2d
 
 # Pair force style
 pair_style         hybrid/overlay sph/concAdiffusion/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
-pair_coeff	   1 1 sph/concAdiffusion/multiphase 1.0e-4 0.0 ${h}
-pair_coeff	   1 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-pair_coeff	   1 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-pair_coeff	   2 2 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-pair_coeff	   2 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
-pair_coeff	   3 3 sph/concAdiffusion/multiphase 0.0 0.0 ${h}
+pair_coeff	   1 1 sph/concAdiffusion/multiphase ${h}
+pair_coeff	   1 2 sph/concAdiffusion/multiphase ${h}
+pair_coeff	   1 3 sph/concAdiffusion/multiphase ${h}
+pair_coeff	   2 2 sph/concAdiffusion/multiphase ${h}
+pair_coeff	   2 3 sph/concAdiffusion/multiphase ${h}
+pair_coeff	   3 3 sph/concAdiffusion/multiphase ${h}
 pair_coeff         * * sph/rhosum/multiphase   ${h}
 pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} 1.0 ${h} 0.0
 
