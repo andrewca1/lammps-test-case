@@ -1,0 +1,43 @@
+# number of particles in each of the directions
+variable          nx   equal 50
+variable          ny   equal 50
+if "${ndim}==3" then &
+"variable nz equal ${nx}"
+
+# size of the domain
+variable          Ly   equal 1.0e-3
+variable          Lx   equal 1.0e-3
+
+# Create wall region
+variable          ywallt equal 0.99*${Lx}
+variable          ywallb equal 0.02*${Lx}
+
+# High concentration region
+variable	  xlconc equal 0.00*${Lx}
+variable	  xhconc equal 0.50*${Lx}
+variable	  ylconc equal 0.02*${Ly}
+variable	  yhconc equal 0.99*${Ly}
+
+if "${ndim}==3" then &
+"variable Lz equal ${Lx}"
+variable          dy   equal  ${Ly}/${ny}
+variable          dx   equal  ${Lx}/${nx}
+
+# density
+variable          sph_rho equal 1.0
+variable          sph_c equal 1.25e-4
+variable          sph_eta equal 1e-4
+
+variable 	  cA_h equal 2.0
+variable	  cA_l equal 0.0
+
+variable          h equal 3.0*${dx}
+variable	  d equal 0.5*${h}
+variable          Nfreq equal 10
+variable          Nfreqimage equal 10
+
+variable          gx equal 1000.0
+variable          sph_mass equal ${dx}^${ndim}*${sph_rho}
+variable	  mass_thres equal 2.0*${sph_mass}
+
+variable          T equal 0.001

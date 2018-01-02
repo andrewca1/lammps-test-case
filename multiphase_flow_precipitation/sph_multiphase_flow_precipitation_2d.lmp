@@ -1,0 +1,103 @@
+# create otuput directory
+shell              mkdir ${dname}
+log                ${dname}/log.lammps
+echo               both
+variable           ndim equal 2
+dimension          ${ndim}
+units              si
+# requires a custom version of LAMMPS
+# https://github.com/slitvinov/lammps-sph-multiphase
+# Built with
+# make yes-USER-SPH
+# 
+# See also
+# http://lammps.sandia.gov/doc/Section_start.html#start_3
+atom_style         meso/multiphase
+boundary          p p p
+include           vars.lmp
+
+# 2D flow poiseulle
+# Adding a new property - need to be added before simulation box
+fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_dmA d_mAthres ghost yes
+
+# create simulation box and 3 types of particles
+variable           pLz    equal  ${dx}
+variable           nLz    equal  0
+
+lattice            sq ${dx} origin 0.5 0.5 0.0
+region             box block 0.0 ${Lx} 0.0 ${Ly} ${nLz} ${pLz} units box
+create_box         2 box
+create_atoms       1 region box
+
+# define regions
+region             top block 0.0 ${Lx} ${ywallt} ${Ly} ${nLz} ${pLz} units box
+group              upper region top
+region             bottom block 0.0 ${Lx} 0.0 ${ywallb} ${nLz} ${pLz} units box
+group              lower region bottom
+group              solid union lower upper
+group              liquid subtract all solid
+
+region		   highc block ${xlconc} ${xhconc} ${ylconc} ${yhconc} ${nLz} ${pLz} units box
+
+# type 1 is liquid, 2 is solid
+set		   group liquid type 1
+set		   group solid type 2
+
+# do full time integration for all particles
+fix                integrate_fix_full all meso
+
+variable           sph_mu  equal ${sph_eta}/${sph_rho}
+include            settimestep.lmp
+
+neighbor           0     bin
+neigh_modify       delay 0 every 1
+comm_modify        vel yes
+
+set                group all meso/rho ${sph_rho}
+set                group all mass ${sph_mass}
+
+# Concentration set
+set		atom * d_dcA 0.0
+set		atom * d_cA 0.0
+set		group liquid d_DA 1.0e-5 # diffusion coefficient for liquid
+set		group solid d_DA 0.0 # diffusion coefficient for solid
+set 		atom * d_cA ${cA_l}
+set 		region highc d_cA ${cA_h}
+set		atom * d_dmA 0.0
+set		atom * d_DA 1.0e-4 # diffusion coefficient
+set		atom * d_cAeq 0.5 # equilibrium concentration
+set		atom * d_RA 750.0 # Interacting between solid and liquid
+set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
+
+fix 		precipitation_fix all meso/precipitationA
+
+# # Couette flow
+# variable           Vx equal 3.0*${dx}
+# velocity           lower set 0.0 0.0 0.0
+# velocity           upper set v_Vx 0.0 0.0
+# fix                noslip wall setforce 0.0 0.0 0.0
+# fix                4 all enforce2d
+
+# Poiseuille flow
+velocity             solid set 0.0 0.0 0.0
+fix                  noslip solid setforce 0.0 0.0 0.0
+fix                  4 solid setforce 0.0 0.0 0.0
+variable             bodyfx atom mass*(2-type)*${gx} # check if liquid
+fix                  pressure liquid addforce v_bodyfx 0.0 0.0
+fix                  7 all enforce2d
+
+# Pair force style
+pair_style         hybrid/overlay sph/concAprecipitation/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
+pair_coeff	   * * sph/concAprecipitation/multiphase ${h} ${d}
+pair_coeff         * * sph/rhosum/multiphase   ${h}
+pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} 1.0 ${h} 0.0
+
+timestep           ${dt}
+
+variable         rtransient equal round(${T}/${dt})
+if "${ndim}==2" then "fix e2d all enforce2d"
+
+dump               dump_id all custom ${Nfreq} ${dname}/dump*.dat id type x y z vx vy vz d_cA mass
+dump_modify        dump_id first yes sort id pad 8
+
+run              ${rtransient}

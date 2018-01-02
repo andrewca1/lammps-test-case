@@ -50,7 +50,7 @@ set		atom * d_dmA 0.0
 set		atom * d_DA 1.0e-4 # diffusion coefficient
 set		atom * d_cAeq 0.5 # equilibrium concentration
 set		atom * d_RA 0.01 # Interacting between solid and liquid
-set		atom * d_mAthres ${mass_thres}
+set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 
 pair_style      sph/concAprecipitation/multiphase
 #               i j cutoff
