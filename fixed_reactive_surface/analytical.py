@@ -4,11 +4,11 @@ from scipy.optimize import brentq, fsolve
 import matplotlib.pyplot as plt
 
 # Parameters
-r1, r2 = 7, 30
+h = 0.03125
+r1, r2 = 3.0*h, 15.0*h
 Ceq, C0 = 0.0, 1.0
-D = 1
-d = 0.5
-k = 1.14
+D = 1.0e-3
+k = 1.4*8.0e-3
 Da = k*r2/D
 
 # Bessel function of the first kind
@@ -54,36 +54,37 @@ alphas = [x for x in A if x not in delA]
 
 # Now we can obtain the concentration
 xr = np.linspace(r1, r2, 10000)
-times = [235, 270]
+times = [40]
 
 for t in times:
     C = xr*0.0
     for alpha in alphas:
-        C += np.pi*np.exp(-(alpha**2)*t*k/(r2*Da))*(Da**2)*(J(0, alpha)**2)*B(xr, alpha)*(1 - Ceq/C0)/F(alpha)
+        C -= np.pi*np.exp(-(alpha**2)*t*k/(r2*Da))*(Da**2)*(J(0, alpha)**2)*B(xr, alpha)*(1 - Ceq/C0)/F(alpha)
 
-    C = 1.0 + (r1/r2)*Da*(1 - Ceq/C0)*np.log(xr/r2)/(1 + (r1/r2)*Da*np.log(r2/r1)) - C
+    C += 1.0 + (r1/r2)*Da*(1 - Ceq/C0)*np.log(xr/r2)/(1 + (r1/r2)*Da*np.log(r2/r1))
     
     # Plot the solution
-    plt.plot(xr, C, label="t={}".format(t))
+    plt.plot(xr/h, C, label="t={}".format(t))
 
-h = 0.015
-times = [10, 50]
-    
-for time in times:
+# Time series
+T = [5, 10, 50]
+# Size
+h = 0.03125
+r1 = 3.0*h
+for time in T:
     # read data from output
     data = np.loadtxt("dump_{}.last.xs".format(time), skiprows=9)
-
+    dx = data[0,2]
+    
     # Get only at the boundary
     N = len(data[:,2])
     x, y = [], []
     for i in range(N):
-        if (0.5 >= data[i,2]) and (0.1 <= data[i,2]):
-            x.append(data[i, 2]/h)
+        if (data[i,2] >= (0.5+r1)) and (abs(data[i,3]-0.5) <= (dx)):
+            x.append((data[i, 2]-0.5)/h)
             y.append(data[i, 5])
 
-    # Revert the x
-    x = x[::-1]
-    plt.scatter(x, y, linestyle='-', s=5, label="sph-{}".format(time))
+    plt.scatter(x, y, s=10, label="sph-{}".format(time))
     
 plt.legend(loc=4)
 plt.show()
