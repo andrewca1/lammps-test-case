@@ -13,23 +13,28 @@ boundary        f f p
 fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_dmA d_mAthres ghost yes
 
 variable        dt equal 0.01
-variable 	T equal 20.00
+variable 	T equal 40.00
 variable 	nrun equal ${T}/${dt}
 
-variable        dx equal 0.02
-variable        h equal 3*${dx}
+# Some dimensional parameters
+variable	L equal 1.0
+variable	neq equal 32
+variable	xmid equal 0.5*${L}
+variable	ymid equal 0.5*${L}
+
+variable        h equal ${L}/${neq}
 variable	d equal 0.5*${h}
-variable 	rho_r equal 1.0
-variable 	rho_l equal 1.0
-variable        mass_l equal ${rho_l}*${dx}^2
-variable        mass_r equal ${rho_r}*${dx}^2
-variable	mass_thres equal 2.0*${mass_l}
+variable        dx equal ${h}/3.0
+
+variable 	sph_rho equal 1.0
+variable        sph_mass equal ${sph_rho}*${dx}^2
+variable	mass_thres equal 2.0*${sph_mass}
 
 lattice		sq ${dx} origin 0.5 0.5 0
-region		box block 0 1.0 0 1.0 0 ${dx} units box
+region		box block 0 ${L} 0 ${L} 0 ${dx} units box
 create_box	2 box
-# create_atoms 	1 box
-create_atoms 	1 random 10000 12345 NULL
+create_atoms 	1 box
+# create_atoms 	1 random 10000 12345 NULL
 
 region          left  block EDGE 0.9 EDGE EDGE EDGE EDGE units box
 region          right block 0.9 EDGE EDGE EDGE EDGE EDGE units box
@@ -38,10 +43,10 @@ region          right block 0.9 EDGE EDGE EDGE EDGE EDGE units box
 set		region left type 1 # liquid
 set		region right type 2 # solid
 
-set	        region left meso/rho ${rho_l}
-set		region right meso/rho ${rho_r}
-set	        region left mass ${mass_l}
-set		region right mass ${mass_r}
+set	        region left meso/rho ${sph_rho}
+set		region right meso/rho ${sph_rho}
+set	        region left mass ${sph_mass}
+set		region right mass ${sph_mass}
 
 # set             region left d_cA 2.0
 # set             region right d_cA 1.0
@@ -50,7 +55,7 @@ set		atom * d_cAeq 0.0 # equilibrium concentration
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
 set		atom * d_DA 1.0e-3 # diffusion coefficient
-set		atom * d_RA 8.0e-3 # Interacting between solid and liquid
+set		atom * d_RA 9.5e-3 # Interacting between solid and liquid
 set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 
 pair_style      sph/concAprecipitation/multiphase
