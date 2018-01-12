@@ -43,13 +43,14 @@ set		region right meso/rho ${rho_r}
 set	        region left mass ${mass_l}
 set		region right mass ${mass_r}
 
-set             region left d_cA 2.0
-set             region right d_cA 1.0
+# set             region left d_cA 2.0
+# set             region right d_cA 1.0
+set		atom * d_cA 1.0
+set		atom * d_cAeq 0.0 # equilibrium concentration
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
-set		atom * d_DA 1.0e-4 # diffusion coefficient
-set		atom * d_cAeq 0.5 # equilibrium concentration
-set		atom * d_RA 0.01 # Interacting between solid and liquid
+set		atom * d_DA 1.0e-3 # diffusion coefficient
+set		atom * d_RA 8.0e-3 # Interacting between solid and liquid
 set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 
 pair_style      sph/concAprecipitation/multiphase
