@@ -45,7 +45,7 @@ region          R1 cylinder z ${xmid} ${ymid} ${r1} EDGE EDGE units box
 region          R2 cylinder z ${xmid} ${ymid} ${r2} EDGE EDGE units box
 group 		solid region R1
 group		constbound region R2
-group		liquid subtract all solid
+group		liquid subtract constbound solid
 group		constantconc subtract all constbound
 
 # Setting the properties for the region
@@ -73,7 +73,7 @@ pair_coeff      * * 	      ${h} ${d}
 timestep        ${dt}
 neighbor	0 bin
 fix             integrate_fix all meso/stationary
-fix 		concentration_fix all meso/concentrationA
+fix 		concentration_fix liquid meso/concentrationA
 fix		constant_concentration constantconc meso/constantconcentrationA
 
 dump		dump_fix all custom 10 dump.heat id type x y z d_cA
