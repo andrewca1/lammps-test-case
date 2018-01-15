@@ -1,3 +1,5 @@
+import os.path
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
@@ -45,19 +47,43 @@ for i in range(Npor):
             cs.append((x, y, radii[i]))
             found_new = True
 
-# Plot and show
-fix, ax = plt.subplots()
-patches = []
+# Write get the string
+out_str = ''
+out_id = ''
+for i in range(Npor):
+    x1, y1, r = cs[i][0], cs[i][1], cs[i][2]
+    # Generate the string
+    out_id += "R{} ".format(i)
+    out_str += "region R{} cylinder z {} {} {} EDGE EDGE units box \n".format(i, x1, y1, r)
 
-patches = []
-for c in cs:
-    x1, y1, r = c[0], c[1], c[2]
-    circle = Circle((x1, y1), r)
-    patches.append(circle)
+out_str += "region rgrains union {} ".format(Npor)
+out_str += out_id
 
-p = PatchCollection(patches, alpha=1.0)
-colors = 100*np.random.rand((len(patches)))
-p.set_array(np.array(colors))
-ax.add_collection(p)
-plt.axis('equal')
-plt.show()
+# File name
+fname = "grains.lmp"
+
+# If file exist, remove file
+if (os.path.isfile(fname)):
+    os.remove(fname)
+
+# Write string to file
+text_file = open(fname, "w")
+text_file.write(out_str)
+text_file.close()
+
+# # Plot and show
+# fix, ax = plt.subplots()
+# patches = []
+
+# patches = []
+# for c in cs:
+#     x1, y1, r = c[0], c[1], c[2]
+#     circle = Circle((x1, y1), r)
+#     patches.append(circle)
+
+# p = PatchCollection(patches, alpha=1.0)
+# colors = 100*np.random.rand((len(patches)))
+# p.set_array(np.array(colors))
+# ax.add_collection(p)
+# plt.axis('equal')
+# plt.show()
