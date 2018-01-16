@@ -8,7 +8,8 @@ h = 0.03125
 r1, r2 = 3.0*h, 15.0*h
 Ceq, C0 = 0.0, 1.0
 D = 1.0e-3
-k = 1.4*8.0e-4
+R = 8.0e-3
+k = R*1.75/h
 Da = k*r2/D
 
 # Bessel function of the first kind
@@ -34,7 +35,7 @@ f = lambda x : (x*Y(1, x*r1/r2) + Da*Y(0, x*r1/r2))*J(0, x) \
     - (x*J(1, x*r1/r2) + Da*J(0, x*r1/r2))*Y(0, x)
 
 # Get a number of results
-X0 = np.arange(3.0, 60.0, 4.0)
+X0 = np.arange(1.0, 60.0, 5.0)
 A = fsolve(f, X0)
 # Filtered out some duplicate elements
 A = list(set(A))
@@ -54,7 +55,7 @@ alphas = [x for x in A if x not in delA]
 
 # Now we can obtain the concentration
 xr = np.linspace(r1, r2, 10000)
-times = [1, 12, 50]
+times = [20, 50, 1000]
 
 for t in times:
     C = xr*0.0
@@ -66,25 +67,24 @@ for t in times:
     # Plot the solution
     plt.plot(xr, C, label="t={}".format(t))
 
-# Time series
-T = [5, 10, 50]
-# Size
-h = 0.03125
-r1 = 3.0*h
-for time in T:
-    # read data from output
-    data = np.loadtxt("dump_{}.last.xs".format(time), skiprows=9)
-    dx = data[0,2]
+# # Size
+# h = 0.03125
+# r1 = 3.0*h
+# times = [20]
+# for time in times:
+#     # read data from output
+#     data = np.loadtxt("dump_{}.last.xs".format(time), skiprows=9)
+#     dx = data[0,2]
     
-    # Get only at the boundary
-    N = len(data[:,2])
-    x, y = [], []
-    for i in range(N):
-        if (data[i,2] >= (0.5+r1)) and (abs(data[i,3]-0.5) <= (dx)):
-            x.append((data[i, 2]-0.5))
-            y.append(data[i, 5])
+#     # Get only at the boundary
+#     N = len(data[:,2])
+#     x, y = [], []
+#     for i in range(N):
+#         if (data[i,2] >= (0.5+r1)) and (abs(data[i,3]-0.5) <= (dx)):
+#             x.append((data[i, 2]-0.5))
+#             y.append(data[i, 5])
 
-    plt.scatter(x, y, s=10, label="sph-{}".format(time))
+#     plt.scatter(x, y, s=10, label="sph-{}".format(time))
     
 plt.legend(loc=4)
 plt.show()
