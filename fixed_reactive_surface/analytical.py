@@ -8,7 +8,7 @@ h = 0.03125
 r1, r2 = 3.0*h, 15.0*h
 Ceq, C0 = 0.0, 1.0
 D = 1.0e-3
-k = 1.4*8.0e-3
+k = 1.4*8.0e-4
 Da = k*r2/D
 
 # Bessel function of the first kind
@@ -26,7 +26,7 @@ def F(alpha):
 
 # Define function B
 def B(r, alpha):
-    return J(0, alpha*r/r2)*(alpha*Y(1, alpha*r1/r2)) + Da*Y(0, alpha*r1/r2) \
+    return J(0, alpha*r/r2)*(alpha*Y(1, alpha*r1/r2) + Da*Y(0, alpha*r1/r2)) \
         - Y(0, alpha*r/r2)*(alpha*J(1, alpha*r1/r2) + Da*J(0, alpha*r1/r2))
 
 # Solve for alpha
@@ -54,7 +54,7 @@ alphas = [x for x in A if x not in delA]
 
 # Now we can obtain the concentration
 xr = np.linspace(r1, r2, 10000)
-times = [40]
+times = [1, 12, 50]
 
 for t in times:
     C = xr*0.0
@@ -64,7 +64,7 @@ for t in times:
     C += 1.0 + (r1/r2)*Da*(1 - Ceq/C0)*np.log(xr/r2)/(1 + (r1/r2)*Da*np.log(r2/r1))
     
     # Plot the solution
-    plt.plot(xr/h, C, label="t={}".format(t))
+    plt.plot(xr, C, label="t={}".format(t))
 
 # Time series
 T = [5, 10, 50]
@@ -81,7 +81,7 @@ for time in T:
     x, y = [], []
     for i in range(N):
         if (data[i,2] >= (0.5+r1)) and (abs(data[i,3]-0.5) <= (dx)):
-            x.append((data[i, 2]-0.5)/h)
+            x.append((data[i, 2]-0.5))
             y.append(data[i, 5])
 
     plt.scatter(x, y, s=10, label="sph-{}".format(time))
