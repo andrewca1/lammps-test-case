@@ -59,10 +59,10 @@ def analytical(_X0, _t, _k, _Da, _C0, _Ceq, _r1, _r2, _nval):
     return _xr, _C, _alphas
 
 # Parameters
-h = 1.0
+h = 0.03125
 r1, r2 = 3.0*h, 15.0*h
 Ceq, C0 = 0.0, 1.0
-D = 1.0
+D = 1.0e-3
 R = 8.0e-3
 
 # Get a number of results
@@ -70,7 +70,7 @@ X0 = np.arange(1.0, 60.0, 4.0)
 
 # Plot the analytical solution
 # TODO: Why the constant factor?
-k = R*0.89
+k = R*0.028
 Da = k*r2/D 
 xr, C, alphas = analytical(X0, 50, k, Da, C0, Ceq, r1, r2, 10000)
 plt.plot(xr/h, C, label="t=50")
