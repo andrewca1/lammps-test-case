@@ -13,13 +13,13 @@ boundary        f f p
 fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_dmA d_mAthres ghost yes
 
 variable        dt equal 0.01
-variable 	T equal 1000.00
+variable 	T equal 2000.00
 variable 	nrun equal ${T}/${dt}
 
 # Some dimensional parameters
 variable	L equal 1.0
 variable	neq equal 64
-variable	yconst equal 0.975*${L}
+variable	yconst equal 0.85*${L}
 
 variable        h equal ${L}/${neq}
 variable	d equal 1.0*${h}
