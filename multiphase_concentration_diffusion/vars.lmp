@@ -1,0 +1,13 @@
+# Time step variables
+variable 	T equal 0.1
+
+# Dimension
+variable        dx equal 0.02
+variable        h equal 3*${dx}
+
+# Particles properties
+variable 	sph_rho equal 1.0
+variable        sph_mass equal ${sph_rho}*${dx}^2
+
+# sound speed
+variable	sph_c equal 200/sqrt(${sph_rho})
