@@ -31,7 +31,7 @@ set		region right mass ${sph_mass}
 set             region left d_cA 2.0
 set             region right d_cA 1.0
 set		atom * d_dcA 0.0
-set		atom * d_DA 5.0e-2 # diffusion coefficient
+set		atom * d_DA 0.1 # diffusion coefficient
 
 pair_style      sph/concAdiffusion/multiphase
 #               i j cutoff
