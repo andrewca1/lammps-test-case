@@ -12,27 +12,7 @@ boundary        p p p
 # Adding a new property - need to be added before simulation box
 fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_dmA d_mAthres ghost yes
 
-variable        dt equal 0.01
-variable 	T equal 40.00
-variable 	nrun equal ${T}/${dt}
-
-# Some dimensional parameters
-variable	L equal 1.0
-variable	neq equal 32
-variable	xmid equal 0.5*${L}
-variable	ymid equal 0.5*${L}
-
-variable        h equal ${L}/${neq}
-variable	d equal 1.0*${h}
-variable        dx equal ${h}/3.0
-
-variable	r1 equal 3.0*${h}
-variable	r2 equal 15.0*${h}
-
-variable 	sph_rho equal 1.0
-variable        sph_mass equal ${sph_rho}*${dx}^2
-variable	mass_thres equal 2.0*${sph_mass}
-
+include		vars.lmp
 
 lattice		sq ${dx} origin 0.5 0.5 0
 region		box block 0 ${L} 0 ${L} 0 ${dx} units box
@@ -59,7 +39,7 @@ set		atom * d_cA 1.0
 # set             group constantconc d_cA 1.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
-set		atom * d_DA 1.0e-3 # diffusion coefficient
+set		atom * d_DA 1.0 # diffusion coefficient
 set		atom * d_cAeq 0.0 # equilibrium concentration
 set		atom * d_RA 8.0e-3 # Interacting between solid and liquid
 set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import itertools
 
 # Time series
-T = [5, 10, 20, 40, 50]
+T = [0.1]
 
 # Size
 h = 0.03125
