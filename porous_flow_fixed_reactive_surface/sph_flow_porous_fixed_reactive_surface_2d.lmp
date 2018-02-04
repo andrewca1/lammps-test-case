@@ -36,8 +36,8 @@ set		group solid type 2 # solid is 2
 set		atom * meso/rho ${sph_rho}
 set	        atom * mass ${sph_mass}
 
-set		atom * d_cA 1.0
-# set             group constconc d_cA 1.0
+set		atom * d_cA 0.0
+set             group constconc d_cA 1.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
 set		atom * d_DA ${sph_DA} # diffusion coefficient
