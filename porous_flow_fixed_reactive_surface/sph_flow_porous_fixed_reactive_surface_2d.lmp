@@ -1,0 +1,85 @@
+# mesoscopic heat conduction
+# heat flow from hot right region to cold left region
+# compare the temperature profile at the end opf the simulation,
+# contained in file dump.last, to analytic solution.
+#
+#
+log             ${dname}/log.lammps
+dimension       2
+units		si
+atom_style	meso/multiphase
+boundary        p p p 
+
+# Adding a new property - need to be added before simulation box
+fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_dmA d_mAthres ghost yes
+
+include 	vars.lmp
+
+lattice		sq ${dx} origin 0.5 0.5 0
+region		box block 0 ${L} 0 ${L} 0 ${dx} units box
+create_box	2 box
+create_atoms 	1 box
+# create_atoms 	1 random 10000 12345 NULL
+
+# Create the solid region
+include         grains.lmp
+group 		solid region rgrains
+region          rconstconc block EDGE EDGE ${yconst} EDGE EDGE EDGE units box
+group		gconstconc region rconstconc
+group		constconc subtract gconstconc solid
+group		liquid subtract all solid 
+
+# Setting the properties for the region
+set		group liquid type 1 # liquid is 1
+set		group solid type 2 # solid is 2
+
+set		atom * meso/rho ${sph_rho}
+set	        atom * mass ${sph_mass}
+
+set		atom * d_cA 0.0
+set             group constconc d_cA 1.0
+set		atom * d_dcA 0.0
+set		atom * d_dmA 0.0
+set		atom * d_DA ${sph_DA} # diffusion coefficient
+set		atom * d_cAeq 0.0 # equilibrium concentration
+set		atom * d_RA ${sph_RA} # Interacting between solid and liquid
+set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
+
+# Pair style
+pair_style         hybrid/overlay sph/rhosum/multiphase 1 sph/taitwater/morris
+pair_coeff         * * sph/rhosum/multiphase   ${h}
+
+pair_style         hybrid/overlay sph/concAprecipitation/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
+pair_coeff         * * sph/concAprecipitation/multiphase ${h} ${d}
+pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} ${sph_gamma} ${h} ${sph_rho_background}
+pair_coeff         * * sph/rhosum/multiphase   ${h}
+
+# Update the concentration
+fix 		concentration_fix all meso/concentrationA
+
+# Flowing properties
+# inter-processor communication
+comm_modify vel yes
+compute         rho_peratom all meso/rho/atom
+# Fix solid particles
+fix             nomovesolid solid setforce 0 0 0
+# Set force to atom
+variable	bodyfy    atom -1.0*mass*${gy}
+fix      	bodyfy_id liquid addforce 0.0 v_bodyfy 0.0 
+
+variable           time equal step*dt
+thermo_style       custom step v_time
+thermo_modify      lost ignore flush yes # ignore out of bound atoms
+thermo             ${Nfreq}
+
+# Integration fix
+fix             integrate_fix_full all meso
+
+# Time step
+timestep        ${dt}
+neighbor	0 bin
+neigh_modify 	delay 0 every 1
+
+dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA d_dcA vx vy vz c_rho_peratom mass
+dump_modify     dump_fix first yes
+run             ${nrun}
