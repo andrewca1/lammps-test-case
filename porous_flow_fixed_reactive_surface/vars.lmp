@@ -35,7 +35,7 @@ variable	sph_RA equal 8.0e-5
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 2000
+variable 	T equal 5000.0
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
 
