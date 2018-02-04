@@ -1,14 +1,14 @@
 # Some dimensional parameters
 variable	L equal 0.1
-variable	neq equal 101
+variable	neq equal 51
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
 
-variable        h equal ${L}/${neq}
+variable        dx equal ${L}/${neq}
+variable        h equal 3.0*${dx}
 variable	d equal 1.0*${h}
-variable        dx equal ${h}/3.0
 
-variable	r1 equal 3.0*${h}
+variable	r1 equal 0.02
 
 # Particle properties
 variable 	sph_rho equal 1.0e3
@@ -18,20 +18,27 @@ variable        sph_mass equal ${sph_rho}*${dx}^2
 variable	mass_thres equal 2.0*${sph_mass}
 
 # Sound speed
-# variable	sph_c equal 200/sqrt(${sph_rho})
 variable	sph_c equal 5.77e-4
 
 # Flow properties
 # viscosity
 variable	sph_eta equal 1.0e-3
 variable 	sph_mu equal ${sph_eta}/${sph_rho}
+# parameter in EOS
+variable        sph_gamma equal 1
+
+# body force
+variable          gx    equal 1.5e-7
 
 # Diffusion and Reaction constant
-variable	sph_DA equal 1.0
-variable	sph_RA equal 0.08
+variable	sph_DA equal 1.0e-3
+variable	sph_RA equal 8.0e-4
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 1.0e-6
+variable 	T equal 800.0
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
+
+# Printout frequency
+variable          Nfreq equal 1000

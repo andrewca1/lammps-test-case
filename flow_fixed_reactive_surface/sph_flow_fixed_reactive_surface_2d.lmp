@@ -4,6 +4,7 @@
 # contained in file dump.last, to analytic solution.
 #
 #
+log             ${dname}/log.lammps
 dimension       2
 units		si
 atom_style	meso/multiphase
@@ -33,7 +34,6 @@ set		atom * meso/rho ${sph_rho}
 set	        atom * mass ${sph_mass}
 
 set		atom * d_cA 1.0
-# set             group constantconc d_cA 1.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
 set		atom * d_DA ${sph_DA} # diffusion coefficient
@@ -41,23 +41,40 @@ set		atom * d_cAeq 0.0 # equilibrium concentration
 set		atom * d_RA ${sph_RA} # Interacting between solid and liquid
 set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 
-pair_style      sph/concAprecipitation/multiphase
-#               i j cutoff
-# There seems to be problem with large value of either constants
-# TODO: Figure it out
-pair_coeff      * * 	      ${h} ${d}
+# Pair style
+pair_style         hybrid/overlay sph/rhosum/multiphase 1 sph/taitwater/morris
+pair_coeff         * * sph/rhosum/multiphase   ${h}
 
-timestep        ${dt}
-neighbor	0 bin
-fix             integrate_fix all meso/stationary
+pair_style         hybrid/overlay sph/concAprecipitation/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
+pair_coeff         * * sph/concAprecipitation/multiphase ${h} ${d}
+pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} ${sph_gamma} ${h} ${sph_rho_background}
+pair_coeff         * * sph/rhosum/multiphase   ${h}
+
+# Update the concentratio
 fix 		concentration_fix liquid meso/concentrationA
 
-dump		dump_fix all custom 10 dump.heat id type x y z d_cA
+# Flowing properties
+# inter-processor communication
+comm_modify vel yes
+compute         rho_peratom all meso/rho/atom
+# Fix solid particles
+fix             nomovesolid solid setforce 0 0 0
+# Set force to atom
+variable	bodyfx    atom mass*${gx}
+fix      	bodyfx_id liquid addforce v_bodyfx 0.0 0.0 
+
+variable           time equal step*dt
+thermo_style       custom step v_time
+thermo             ${Nfreq}
+
+# Integration fix
+fix             integrate_fix_full all meso
+
+# Time step
+timestep        ${dt}
+neighbor	0 bin
+neigh_modify 	delay 0 every 1
+
+dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
 dump_modify     dump_fix first yes
 run             ${nrun}
-undump          dump_fix
-
-dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA
-dump_modify     dump_fix first yes
-run             0
-undump          dump_fix
