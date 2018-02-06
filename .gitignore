@@ -5,3 +5,6 @@ log*
 *.dat
 .ipynb_checkpoints
 in.dt
+
+# ignore results
+data-wall
