@@ -3,6 +3,7 @@ variable	L equal 1.0
 variable	neq equal 51
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
+variable 	xconst equal 0.1*${L}
 
 variable        dx equal ${L}/${neq}
 variable        h equal 3.0*${dx}
