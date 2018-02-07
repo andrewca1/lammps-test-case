@@ -16,6 +16,10 @@ variable 	sph_rho equal 1.0
 variable        sph_mass equal ${sph_rho}*${dx}^2
 variable	mass_thres equal 2.0*${sph_mass}
 
+# Reaction/Diffusion properties
+variable	sph_DA equal 1.0
+variable	sph_RA equal 0.08
+
 # Sound speed
 variable	sph_c equal 200/sqrt(${sph_rho})
 

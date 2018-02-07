@@ -4,6 +4,9 @@ variable dt_cfl equal (0.25*${h})/(3.0*${sph_c})
 
 variable dt_c equal 1/4.0*${dx}/${sph_c}
 
-shell ./min.sh dt ${dt_cfl} ${dt_c}
+variable dt_DA equal 1/2.0*${dx}*${dx}/(${sph_DA})
+variable dt_RA equal 1.0*${dx}/${sph_RA}
+
+shell ./min.sh dt ${dt_cfl} ${dt_c} ${dt_DA} ${dt_RA}
 include in.dt
 variable dt equal ${dt}
