@@ -30,6 +30,10 @@ variable        sph_gamma equal 1
 variable          gy    equal 1.5e-7
 
 # Diffusion and Reaction constant
+variable	sph_DA equal 1.0e-6
+variable	sph_RA equal 1.0
+
+# Diffusion and Reaction constant
 variable	sph_DA equal 1.0e-3
 variable	sph_RA equal 8.0e-4
 

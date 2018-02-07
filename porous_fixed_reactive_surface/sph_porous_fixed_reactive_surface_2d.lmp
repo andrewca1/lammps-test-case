@@ -39,9 +39,9 @@ set		atom * d_cA 0.0
 set             group constconc d_cA 1.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
-set		atom * d_DA 0.5 # diffusion coefficient
+set		atom * d_DA ${sph_DA} # diffusion coefficient
 set		atom * d_cAeq 0.0 # equilibrium concentration
-set		atom * d_RA 0.1 # Interacting between solid and liquid
+set		atom * d_RA ${sph_RA} # Interacting between solid and liquid
 set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 
 pair_style      sph/concAprecipitation/multiphase
