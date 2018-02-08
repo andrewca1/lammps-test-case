@@ -43,6 +43,7 @@ pair_coeff         * * sph/rhosum/multiphase   ${h}
 
 # Update the concentration
 fix 		concentration_fix liquid meso/concentrationA
+fix 		concentration_fix1 constconc  meso/concentrationA
 
 # Flowing properties
 # inter-processor communication
@@ -63,7 +64,7 @@ fix             integrate_fix_full all meso
 
 # Keep the concentration constant at inlet
 set    	        group constconc d_cA 1.0
-fix    	        constconc_fix constconc meso/constantconcentrationA 1.0
+# fix    	        constconc_fix constconc meso/constantconcentrationA 1.0
 
 # Time step after eequilibrium
 timestep        ${dt1}
