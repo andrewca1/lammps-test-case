@@ -1,0 +1,10 @@
+variable BIG equal 1e20
+
+variable dt_DA equal 1/2.0*${dx}*${dx}/(${sph_DA})
+variable dt_RA equal 1.0*${dx}/${sph_RA}
+
+shell ./min.sh dt1 ${dt_cfl} ${dt_c} ${dt_eta} ${dt_DA} ${dt_RA}
+include in.dt1
+variable dt equal ${dt1}
+
+print "(settimestep) dt_c dt_eta dt_cfl dt_DA dt_RA ${dt_cfl} ${dt_c} ${dt_eta} ${dt_DA} ${dt_RA} ${dt1}"
