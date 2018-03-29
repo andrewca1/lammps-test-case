@@ -44,7 +44,7 @@ set		atom * d_cAeq 0.0 # equilibrium concentration
 set		atom * d_RA ${sph_RA} # Interacting between solid and liquid
 set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 
-pair_style      sph/concAprecipitation/multiphase
+pair_style      sph/concAsurfacereaction/multiphase
 #               i j cutoff
 # There seems to be problem with large value of either constants
 # TODO: Figure it out
@@ -54,7 +54,7 @@ timestep        ${dt}
 neighbor	0 bin
 fix             integrate_fix all meso/stationary
 fix 		concentration_fix liquid meso/concentrationA
-fix		constant_concentration constconc meso/constantconcentrationA
+fix		constant_concentration constconc meso/constantconcentrationA 1.0
 
 dump		dump_fix all custom 40 dump.heat id type x y z d_cA
 dump_modify     dump_fix first yes
