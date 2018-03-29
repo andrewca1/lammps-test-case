@@ -1,0 +1,70 @@
+# mesoscopic heat conduction
+# heat flow from hot right region to cold left region
+# compare the temperature profile at the end opf the simulation,
+# contained in file dump.last, to analytic solution.
+#
+#
+dimension       2
+units		si
+atom_style	meso/multiphase
+boundary        p p p 
+
+# Adding a new property - need to be added before simulation box
+fix   	        prop all property/atom d_cA d_dcA d_DA d_DAeff d_cAeq d_RA d_RAeff d_dmA d_mAthres ghost yes
+
+include		vars.lmp
+
+lattice		sq ${dx} origin 0.5 0.5 0
+region		box block 0 ${L} 0 ${L} 0 ${dx} units box
+create_box	2 box
+create_atoms 	1 box
+# create_atoms 	1 random 10000 12345 NULL
+
+# Create the solid region
+region          R1 cylinder z ${xmid} ${ymid} ${r1} EDGE EDGE units box
+region          rconstconc block EDGE ${xconst} EDGE EDGE EDGE EDGE units box
+group		gconstconc region rconstconc
+
+group 		solid region R1
+group 		constconc subtract gconstconc solid
+group		liquid subtract all solid constconc
+
+# Setting the properties for the region
+set		group liquid type 1 # liquid is 1
+set		group solid type 2 # solid is 2
+
+set		atom * meso/rho ${sph_rho}
+set	        atom * mass ${sph_mass}
+
+set		atom * d_cA 0.0
+set             group constconc d_cA 1.0
+set		atom * d_dcA 0.0
+set		atom * d_dmA 0.0
+set		atom * d_DA ${sph_DA} # diffusion coefficient
+set		atom * d_DAeff ${sph_DAeff} # effective diffusion coefficient in solid
+set		atom * d_cAeq 0.0 # equilibrium concentration
+set		atom * d_RA ${sph_RA} # Interacting between solid and liquid
+set		atom * d_RAeff ${sph_RAeff} # effective reaction rate inside solid
+set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
+
+pair_style      sph/concAporoussurfacereaction/multiphase
+#               i j cutoff
+# There seems to be problem with large value of either constants
+# TODO: Figure it out
+pair_coeff      * * 	      ${h} ${d}
+
+timestep        ${dt}
+neighbor	0 bin
+fix             integrate_fix all meso/stationary
+fix 		concentration_fix liquid meso/concentrationA
+fix		constant_concentration constconc meso/constantconcentrationA 1.0
+
+dump		dump_fix all custom 10 dump.heat id type x y z d_cA
+dump_modify     dump_fix first yes
+run             ${nrun}
+undump          dump_fix
+
+dump		dump_fix all custom 10 dump_${T}.last.xs id type xs ys zs d_cA
+dump_modify     dump_fix first yes
+run             0
+undump          dump_fix
