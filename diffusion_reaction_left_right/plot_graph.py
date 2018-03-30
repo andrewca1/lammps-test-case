@@ -11,7 +11,7 @@ h = 0.03125
 r1 = 3.0*h
 
 # plot
-plt.figure(figsize=(16, 9))
+plt.figure(figsize=(10, 8))
 ax = plt.gca()
 
 # marker tools
