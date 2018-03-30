@@ -9,7 +9,7 @@ variable        dx equal ${L}/${neq}
 variable        h equal 3.0*${dx}
 variable	d equal 1.0*${h}
 
-variable	r1 equal 0.2*${L}
+variable	r1 equal 0.3*${L}
 
 # Particle properties
 variable 	sph_rho equal 1.0e3
@@ -32,12 +32,12 @@ variable        sph_gamma equal 1
 variable          gx    equal 1.5e-7
 
 # Diffusion and Reaction constant
-variable	sph_DA equal 1.0e-6
-variable	sph_RA equal 1.0
+variable	sph_DA equal 1.0e-3
+variable	sph_RA equal 1.0e-3
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 1000.0
+variable 	T equal 2000.0
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
 

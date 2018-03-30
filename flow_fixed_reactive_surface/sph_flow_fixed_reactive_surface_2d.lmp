@@ -25,9 +25,6 @@ create_atoms 	1 box
 region          R1 cylinder z ${xmid} ${ymid} ${r1} EDGE EDGE units box
 group 		solid region R1
 group		liquid subtract all solid
-# Create region with constant concentration
-region	 	rconstconc block 0.0 ${xconst} EDGE EDGE EDGE EDGE units box
-group		constconc region rconstconc
 
 # Setting the properties for the region
 set		group liquid type 1 # liquid is 1
@@ -55,9 +52,6 @@ pair_coeff         * * sph/rhosum/multiphase   ${h}
 
 # Update the concentration
 fix 		concentration_fix liquid meso/concentrationA
-# Keep the concentration constant at inlet
-set    	        group constconc d_cA 1.0
-fix    	        constconc_fix constconc meso/constantconcentrationA 1.0
 
 # Flowing properties
 # inter-processor communication
@@ -81,6 +75,19 @@ timestep        ${dt}
 neighbor	0 bin
 neigh_modify 	delay 0 every 1
 
+# dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
+# dump_modify     dump_fix first yes
+run             ${nrun}
+
+# Create region with constant concentration
+region	 	rconstconc block 0.0 ${xconst} EDGE EDGE EDGE EDGE units box
+group		constconc region rconstconc
+
+# Keep the concentration constant at inlet
+set    	        group constconc d_cA 1.0
+fix    	        constconc_fix constconc meso/constantconcentrationA 1.0
+
 dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
 dump_modify     dump_fix first yes
+
 run             ${nrun}
