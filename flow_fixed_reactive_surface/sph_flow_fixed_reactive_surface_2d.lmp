@@ -48,8 +48,8 @@ set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 pair_style         hybrid/overlay sph/rhosum/multiphase 1 sph/taitwater/morris
 pair_coeff         * * sph/rhosum/multiphase   ${h}
 
-pair_style         hybrid/overlay sph/concAprecipitation/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
-pair_coeff         * * sph/concAprecipitation/multiphase ${h} ${d}
+pair_style         hybrid/overlay sph/concAsurfacereaction/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
+pair_coeff         * * sph/concAsurfacereaction/multiphase ${h} ${d}
 pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} ${sph_gamma} ${h} ${sph_rho_background}
 pair_coeff         * * sph/rhosum/multiphase   ${h}
 
