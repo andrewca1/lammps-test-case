@@ -56,7 +56,7 @@ pair_coeff      * * 	      ${h} ${d}
 timestep        ${dt}
 neighbor	0 bin
 fix             integrate_fix all meso/stationary
-fix 		concentration_fix liquid meso/concentrationA
+fix 		concentration_fix all meso/concentrationA
 fix		constant_concentration constconc meso/constantconcentrationA 1.0
 
 dump		dump_fix all custom 10 dump.heat id type x y z d_cA
