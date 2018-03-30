@@ -90,4 +90,5 @@ fix    	        constconc_fix constconc meso/constantconcentrationA 1.0
 dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
 dump_modify     dump_fix first yes
 
-run             ${nrun}
+variable 	nrun2 equal 100*${nrun}
+run             ${nrun2}

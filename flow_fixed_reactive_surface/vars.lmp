@@ -1,6 +1,6 @@
 # Some dimensional parameters
 variable	L equal 1.0
-variable	neq equal 51
+variable	neq equal 151
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
 variable 	xconst equal 0.1*${L}
@@ -29,15 +29,15 @@ variable 	sph_mu equal ${sph_eta}/${sph_rho}
 variable        sph_gamma equal 1
 
 # body force
-variable          gx    equal 1.5e-7
+variable          gx    equal 1.5e-9
 
 # Diffusion and Reaction constant
-variable	sph_DA equal 1.0e-3
-variable	sph_RA equal 1.0e-3
+variable	sph_DA equal 1.0e-8
+variable	sph_RA equal 1.0e-6
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 2000.0
+variable 	T equal 500.0
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
 
