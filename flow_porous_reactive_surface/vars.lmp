@@ -35,6 +35,13 @@ variable          gx    equal 1.5e-9
 variable	sph_DA equal 1.0e-8
 variable	sph_RA equal 1.0e-6
 
+# porosity
+variable	solid_por equal 0.4
+
+# Reaction/Diffusion properties in solid
+variable	sph_DAeff equal ${solid_por}*${sph_DA}
+variable	sph_RAeff equal ${solid_por}*${sph_RA}
+
 # Get timestep
 include		settimestep.lmp
 variable 	T equal 500.0
