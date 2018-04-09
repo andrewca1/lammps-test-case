@@ -72,6 +72,9 @@ timestep        ${dt}
 neighbor	0 bin
 neigh_modify 	delay 0 every 1
 
+dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
+dump_modify     dump_fix first yes
+
 run             ${nrun}
 
 # Create region with inlet concentration
@@ -82,8 +85,5 @@ fix    	        inlet_fix liquid meso/inletconcentrationA 1.0 region rinlet unit
 # Update the concentration
 fix 		concentration_fix liquid meso/concentrationA
 
-dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
-dump_modify     dump_fix first yes
-
-variable 	nrun2 equal 100*${nrun}
+variable 	nrun2 equal 10*${nrun}
 run             ${nrun2}
