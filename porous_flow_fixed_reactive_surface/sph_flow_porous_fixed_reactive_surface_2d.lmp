@@ -24,9 +24,6 @@ create_atoms 	1 box
 # Create the solid region
 include         grains.lmp
 group 		solid region rgrains
-region          rconstconc block EDGE EDGE ${yconst} EDGE EDGE EDGE units box
-group		gconstconc region rconstconc
-group		constconc subtract gconstconc solid
 group		liquid subtract all solid 
 
 # Setting the properties for the region
@@ -37,7 +34,6 @@ set		atom * meso/rho ${sph_rho}
 set	        atom * mass ${sph_mass}
 
 set		atom * d_cA 0.0
-set             group constconc d_cA 1.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
 set		atom * d_DA ${sph_DA} # diffusion coefficient
@@ -49,13 +45,10 @@ set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 pair_style         hybrid/overlay sph/rhosum/multiphase 1 sph/taitwater/morris
 pair_coeff         * * sph/rhosum/multiphase   ${h}
 
-pair_style         hybrid/overlay sph/concAprecipitation/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
-pair_coeff         * * sph/concAprecipitation/multiphase ${h} ${d}
+pair_style         hybrid/overlay sph/concAsurfacereaction/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
+pair_coeff         * * sph/concAsurfacereaction/multiphase ${h} ${d}
 pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} ${sph_gamma} ${h} ${sph_rho_background}
 pair_coeff         * * sph/rhosum/multiphase   ${h}
-
-# Update the concentration
-fix 		concentration_fix all meso/concentrationA
 
 # Flowing properties
 # inter-processor communication
@@ -83,3 +76,14 @@ neigh_modify 	delay 0 every 1
 dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA d_dcA vx vy vz c_rho_peratom mass
 dump_modify     dump_fix first yes
 run             ${nrun}
+
+# Create region with inlet concentration
+region	 	rinlet block EDGE EDGE ${yconst} EDGE EDGE EDGE units box
+# Keep the concentration constant at inlet
+set 		group solid d_cA 0.0
+fix    	        inlet_fix liquid meso/inletconcentrationA 1.0 region rinlet units box
+# Update the concentration
+fix 		concentration_fix liquid meso/concentrationA
+
+variable 	nrun2 equal 10*${nrun}
+run             ${nrun2}

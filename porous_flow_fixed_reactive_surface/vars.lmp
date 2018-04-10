@@ -3,11 +3,12 @@ variable	L equal 1.0
 variable	neq equal 151
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
-variable	yconst equal 0.0*${L}
 
 variable        dx equal ${L}/${neq}
 variable        h equal 3.0*${dx}
 variable	d equal 0.4*${h}
+
+variable	yconst equal ${L}-${dx}
 
 # Particle properties
 variable 	sph_rho equal 1.0e3
@@ -39,7 +40,7 @@ variable	sph_RA equal 8.0e-4
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 5000.0
+variable 	T equal 100000.0
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
 
