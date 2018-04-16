@@ -71,6 +71,7 @@ thermo             ${Nfreq}
 
 # Integration fix
 fix             integrate_fix_full all meso
+fix             solid_meso solid meso/stationary
 
 # Time step
 timestep        ${dt}
