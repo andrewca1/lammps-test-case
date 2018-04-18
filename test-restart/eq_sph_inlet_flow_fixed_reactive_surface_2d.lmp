@@ -73,9 +73,9 @@ timestep        ${dt}
 neighbor	0 bin
 neigh_modify 	delay 0 every 1
 
-dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom v_bodyfx
+dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
 dump_modify     dump_fix first yes
 
 run             ${nrun}
 
-write_restart restart.equil
+write_dump    all custom dump.file id type x y z vx vy vz 
