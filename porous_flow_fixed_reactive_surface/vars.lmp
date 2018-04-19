@@ -1,6 +1,6 @@
 # Some dimensional parameters
 variable	L equal 1.0
-variable	neq equal 151
+variable	neq equal 251
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
 
@@ -28,7 +28,7 @@ variable 	sph_mu equal ${sph_eta}/${sph_rho}
 variable        sph_gamma equal 1
 
 # body force
-variable          gy    equal 1.5e-7
+variable          gy    equal 1.5e-9
 
 # Diffusion and Reaction constant
 variable	sph_DA equal 1.0e-6
