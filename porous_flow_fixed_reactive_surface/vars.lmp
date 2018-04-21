@@ -32,7 +32,7 @@ variable          gy    equal 1.5e-9
 
 # Diffusion and Reaction constant
 variable	sph_DA equal 8.3e-6
-variable	sph_RA equal 84.7
+variable	sph_RA equal 8.47e-2
 variable	sph_cAeq equal 0.385
 
 # Get timestep
