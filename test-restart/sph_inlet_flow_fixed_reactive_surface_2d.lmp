@@ -4,6 +4,7 @@
 # contained in file dump.last, to analytic solution.
 #
 #
+log             ${dname}/log.lammps
 dimension       2
 units		si
 atom_style	meso/multiphase
@@ -20,9 +21,12 @@ create_box	2 box
 create_atoms 	1 box
 # create_atoms 	1 random 10000 12345 NULL
 
+# This has to match the snapshot file
+read_dump dump.file ${nrun} x y vx vy  box yes
+
 # Create the solid region
 region          R1 cylinder z ${xmid} ${ymid} ${r1} EDGE EDGE units box
-group 		solid region R1
+group 	        solid region R1
 group		liquid subtract all solid
 
 # Setting the properties for the region
@@ -44,18 +48,14 @@ set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 pair_style         hybrid/overlay sph/rhosum/multiphase 1 sph/taitwater/morris
 pair_coeff         * * sph/rhosum/multiphase   ${h}
 
-pair_style         hybrid/overlay sph/concAprecipitation/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
-pair_coeff         * * sph/concAprecipitation/multiphase ${h} ${d}
+pair_style         hybrid/overlay sph/concAsurfacereaction/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
+pair_coeff         * * sph/concAsurfacereaction/multiphase ${h} ${d}
 pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} ${sph_gamma} ${h} ${sph_rho_background}
 pair_coeff         * * sph/rhosum/multiphase   ${h}
-
-# Update the concentration
-fix 		concentration_fix liquid meso/concentrationA
 
 # Flowing properties
 # inter-processor communication
 comm_modify vel yes
-compute         rho_peratom all meso/rho/atom
 # Fix solid particles
 fix             nomovesolid solid setforce 0 0 0
 # Set force to atom
@@ -68,14 +68,25 @@ thermo             ${Nfreq}
 
 # Integration fix
 fix             integrate_fix_full all meso
+fix             solid_meso solid meso/stationary
 
-# Time step until equilibrium
-timestep        ${dt0}
+# Create region with inlet concentration
+region	 	rinlet block 0.0 ${xconst} EDGE EDGE EDGE EDGE units box
+# Keep the concentration constant at inlet
+set 		group solid d_cA 0.0
+
+fix    	        inlet_fix liquid meso/inletconcentrationA 1.0 region rinlet units box
+# Update the concentration
+fix 		concentration_fix liquid meso/concentrationA
+
+# Time step
+timestep        ${dt}
 neighbor	0 bin
 neigh_modify 	delay 0 every 1
 
+compute         rho_peratom all meso/rho/atom
 dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
 dump_modify     dump_fix first yes
-run             ${nrun0}
 
-write_restart restart.mpiio
+
+run             ${nrun}

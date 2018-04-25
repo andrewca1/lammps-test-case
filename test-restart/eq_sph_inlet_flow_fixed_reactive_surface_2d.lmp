@@ -78,13 +78,4 @@ dump_modify     dump_fix first yes
 
 run             ${nrun}
 
-# Create region with inlet concentration
-region	 	rinlet block 0.0 ${xconst} EDGE EDGE EDGE EDGE units box
-# Keep the concentration constant at inlet
-set 		group solid d_cA 0.0
-fix    	        inlet_fix liquid meso/inletconcentrationA 1.0 region rinlet units box
-# Update the concentration
-fix 		concentration_fix liquid meso/concentrationA
-
-variable 	nrun2 equal 10*${nrun}
-run             ${nrun2}
+write_dump    all custom dump.file id type x y z vx vy vz 

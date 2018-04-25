@@ -8,7 +8,7 @@ mkdir -p ${dname}
 
 lmp=${exedir}/lmp_mpi
 
-mpirun --mca orte_base_help_aggregate 0 -np 8 ${lmp} -in sph_flow_fixed_reactive_surface_2d.lmp -var dname ${dname}
+mpirun --mca orte_base_help_aggregate 0 -np 8 ${lmp} -in sph_inlet_flow_fixed_reactive_surface_2d.lmp -var dname ${dname}
 
 # lmp=${exedir}/lmp_serial
 

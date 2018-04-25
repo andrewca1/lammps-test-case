@@ -3,13 +3,14 @@ variable	L equal 1.0
 variable	neq equal 151
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
-variable 	xconst equal 0.1*${L}
 
 variable        dx equal ${L}/${neq}
 variable        h equal 3.0*${dx}
 variable	d equal 1.0*${h}
 
-variable	r1 equal 0.2*${L}
+variable 	xconst equal ${dx}
+
+variable	r1 equal 0.3*${L}
 
 # Particle properties
 variable 	sph_rho equal 1.0e3
@@ -29,22 +30,17 @@ variable 	sph_mu equal ${sph_eta}/${sph_rho}
 variable        sph_gamma equal 1
 
 # body force
-variable          gx    equal 1.5e-8
+variable          gx    equal 1.5e-7
 
 # Diffusion and Reaction constant
-variable	sph_DA equal 1.0e-2
-variable	sph_RA equal 1.0
+variable	sph_DA equal 1.0e-8
+variable	sph_RA equal 1.0e-6
 
 # Get timestep
-include		settimestep-flow.lmp
-variable 	T0 equal 5000.0
-timestep	${dt0}
-variable 	nrun0 equal round(${T0}/${dt0})
-
-include		settimestep-cA.lmp
-variable 	T1 equal 1000.0
-timestep	${dt1}
-variable 	nrun1 equal round(${T1}/${dt1})
+include		settimestep.lmp
+variable 	T equal 1000.0
+timestep	${dt}
+variable 	nrun equal round(${T}/${dt})
 
 # Printout frequency
-variable          Nfreq equal 100
+variable          Nfreq equal 1
