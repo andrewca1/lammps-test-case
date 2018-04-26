@@ -1,6 +1,6 @@
 # Some dimensional parameters
 variable	L equal 1.0
-variable	neq equal 10
+variable	neq equal 32
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
 
@@ -18,12 +18,12 @@ variable	mass_thres equal 2.0*${sph_mass}
 
 # Reaction/Diffusion properties
 variable	sph_DA equal 1.5
-variable	sph_RA equal 0.08
+variable	sph_RA equal 0.0000000000000001
 # porosity
 variable	solid_por equal 1.0
 # Reaction/Diffusion properties in solid
 variable	sph_DAeff equal ${solid_por}*${sph_DA}
-variable	sph_RAeff equal ${solid_por}*${sph_RA}
+variable	sph_kA equal ${solid_por}*${sph_RA}
 
 # Sound speed
 variable	sph_c equal 200/sqrt(${sph_rho})
