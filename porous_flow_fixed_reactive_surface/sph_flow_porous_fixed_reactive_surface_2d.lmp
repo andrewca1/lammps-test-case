@@ -39,17 +39,19 @@ set	        atom * mass ${sph_mass}
 set		atom * d_cA 0.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
-set		atom * d_DA ${sph_DA} # diffusion coefficient
-set		atom * d_cAeq ${sph_cAeq} # equilibrium concentration
+set		type 1 d_DA ${sph_DA} # diffusion coefficient
+set		type 2 d_DA ${sph_DAeff} # effective diffusion coefficient in solid
+set		atom * d_cAeq 0.0 # equilibrium concentration
 set		atom * d_RA ${sph_RA} # Interacting between solid and liquid
+set		atom * d_kA ${sph_RAeff} # effective reaction rate inside solid
 set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 
 # Pair style
 pair_style         hybrid/overlay sph/rhosum/multiphase 1 sph/taitwater/morris
 pair_coeff         * * sph/rhosum/multiphase   ${h}
 
-pair_style         hybrid/overlay sph/concAsurfacereaction/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
-pair_coeff         * * sph/concAsurfacereaction/multiphase ${h} ${d}
+pair_style         hybrid/overlay sph/concAporoussurfacereaction/multiphase sph/rhosum/multiphase 1 sph/taitwater/multiphase
+pair_coeff         * * sph/concAporoussurfacereaction/multiphase ${h} ${d}
 pair_coeff         * * sph/taitwater/multiphase ${sph_rho} ${sph_c} ${sph_eta} ${sph_gamma} ${h} ${sph_rho_background}
 pair_coeff         * * sph/rhosum/multiphase   ${h}
 
