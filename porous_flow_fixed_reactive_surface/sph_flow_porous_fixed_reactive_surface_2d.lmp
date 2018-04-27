@@ -11,7 +11,7 @@ atom_style	meso/multiphase
 boundary        p p p 
 
 # Adding a new property - need to be added before simulation box
-fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_dmA d_mAthres ghost yes
+fix   	        prop all property/atom d_cA d_dcA d_DA d_kA d_cAeq d_RA d_dmA d_mAthres ghost yes
 
 include 	vars.lmp
 
