@@ -11,7 +11,7 @@ atom_style	meso/multiphase
 boundary        p p p 
 
 # Adding a new property - need to be added before simulation box
-fix   	        prop all property/atom d_cA d_dcA d_DA d_DAeff d_cAeq d_RA d_RAeff d_dmA d_mAthres ghost yes
+fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_kA d_RA d_RAeff d_dmA d_mAthres ghost yes
 
 include		vars.lmp
 
@@ -36,11 +36,11 @@ set	        atom * mass ${sph_mass}
 set		atom * d_cA 0.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
-set		atom * d_DA ${sph_DA} # diffusion coefficient
-set		atom * d_DAeff ${sph_DAeff} # effective diffusion coefficient in solid
+set		type 1 d_DA ${sph_DA} # diffusion coefficient
+set		type 2 d_DA ${sph_DAeff} # effective diffusion coefficient in solid
 set		atom * d_cAeq 0.0 # equilibrium concentration
 set		atom * d_RA ${sph_RA} # Interacting between solid and liquid
-set		atom * d_RAeff ${sph_RAeff} # effective reaction rate inside solid
+set		atom * d_kA ${sph_RAeff} # effective reaction rate inside solid
 set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
 
 # Pair style
