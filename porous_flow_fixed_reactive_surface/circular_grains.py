@@ -9,7 +9,7 @@ from matplotlib.collections import PatchCollection
 np.random.seed(1993)
 
 # Domain size, unit of h
-L = 1.0
+L = 0.1
 Nh = 64.0
 h = L/Nh
 
@@ -92,6 +92,6 @@ colors = 100*np.random.rand((len(patches)))
 p.set_array(np.array(colors))
 ax.add_collection(p)
 plt.axis('equal')
-plt.xlim(0.0, 1.0)
-plt.ylim(0.0, 1.0)
+plt.xlim(0.0, L)
+plt.ylim(0.0, L)
 plt.show()
