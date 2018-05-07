@@ -3,11 +3,12 @@ variable	L equal 0.1
 variable	neq equal 101
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
-variable 	xconst equal 1.0*${L}
 
 variable        dx equal ${L}/${neq}
 variable        h equal 3.0*${dx}
 variable	d equal 1.0*${h}
+
+variable 	xconst equal ${dx}
 
 variable	r1 equal 0.3*${L}
 
@@ -32,8 +33,8 @@ variable        sph_gamma equal 1
 variable          gx    equal 5.0e-5
 
 # Diffusion and Reaction constant
-variable	sph_DA equal 1.0e-9
-variable	sph_RA equal 1.0e-9
+variable	sph_DA equal 1.0e-6
+variable	sph_RA equal 1.0e-4
 
 # porosity
 variable	solid_por equal 0.4
@@ -44,7 +45,7 @@ variable	sph_RAeff equal ${solid_por}*${sph_RA}
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 150.0
+variable 	T equal 50.0
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
 

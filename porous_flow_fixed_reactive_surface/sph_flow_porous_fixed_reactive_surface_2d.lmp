@@ -85,7 +85,7 @@ region	 	rinlet block EDGE EDGE ${yconst} EDGE EDGE EDGE units box
 set 		group solid d_cA 0.0
 fix    	        inlet_fix liquid meso/inletconcentrationA 1.0 region rinlet units box
 # Update the concentration
-fix 		concentration_fix liquid meso/concentrationA
+fix 		concentration_fix all meso/concentrationA
 
 dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA d_dcA vx vy vz c_rho_peratom mass
 dump_modify     dump_fix first yes

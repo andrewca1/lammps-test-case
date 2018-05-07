@@ -82,17 +82,13 @@ dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy 
 dump_modify     dump_fix first yes
 run             ${nrun}
 
-# Create region with constant concentration
-region	 	rconstconc block 0.0 ${xconst} EDGE EDGE EDGE EDGE units box
-group		constconc region rconstconc
-
+# Create region with inlet concentration
+region	 	rinlet block 0.0 ${xconst} EDGE EDGE EDGE EDGE units box
 # Keep the concentration constant at inlet
-set    	        group constconc d_cA 1.0
-set		group solid d_cA 0.0
-# fix    	        constconc_fix constconc meso/constantconcentrationA 1.0
-
-# dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
-# dump_modify     dump_fix first yes
+set 		group solid d_cA 0.0
+fix    	        inlet_fix liquid meso/inletconcentrationA 1.0 region rinlet units box
+# Update the concentration
+fix 		concentration_fix all meso/concentrationA
 
 variable 	nrun2 equal 100*${nrun}
 run             ${nrun2}
