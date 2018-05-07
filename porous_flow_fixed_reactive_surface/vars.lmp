@@ -50,4 +50,4 @@ timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
 
 # Printout frequency
-variable          Nfreq equal 20
+variable          Nfreq equal 1000

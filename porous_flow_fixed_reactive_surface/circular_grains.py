@@ -16,9 +16,9 @@ h = L/Nh
 # 10 grains of 1.3h
 N1, r1 = 10, 1.3*h
 # 18 grains of 2.5h
-N2, r2 = 9, 2.5*h
+N2, r2 = 18, 2.5*h
 # 17 grains of 3.75h
-N3, r3 = 8, 3.75*h
+N3, r3 = 17, 3.75*h
 # Total = 77
 Npor = N1 + N2 + N3
 
@@ -33,7 +33,7 @@ def is_overlapped(_x, _y, _r, _cs):
         # check if they are at the edge
         if (min(_x - _r, _y - _r) <= 0.0):
             return True
-        if (max(_x + _r, _y + _r) >= 1.0):
+        if (max(_x + _r, _y + _r) >= L):
             return True
         # check if overlapping others
         _b = np.array((_c[0], _c[1]))
