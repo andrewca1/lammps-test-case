@@ -78,8 +78,8 @@ timestep        ${dt}
 neighbor	0 bin
 neigh_modify 	delay 0 every 1
 
-# dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
-# dump_modify     dump_fix first yes
+dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
+dump_modify     dump_fix first yes
 run             ${nrun}
 
 # Create region with constant concentration
@@ -91,8 +91,8 @@ set    	        group constconc d_cA 1.0
 set		group solid d_cA 0.0
 # fix    	        constconc_fix constconc meso/constantconcentrationA 1.0
 
-dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
-dump_modify     dump_fix first yes
+# dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA vx vy vz c_rho_peratom
+# dump_modify     dump_fix first yes
 
 variable 	nrun2 equal 100*${nrun}
 run             ${nrun2}
