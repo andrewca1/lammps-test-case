@@ -1,5 +1,5 @@
 # Some dimensional parameters
-variable	L equal 1.0
+variable	L equal 0.1
 variable	neq equal 101
 variable	xmid equal 0.5*${L}
 variable	ymid equal 0.5*${L}
@@ -19,7 +19,7 @@ variable        sph_mass equal ${sph_rho}*${dx}^2
 variable	mass_thres equal 2.0*${sph_mass}
 
 # Sound speed
-variable	sph_c equal 5.77e-4
+variable	sph_c equal 1.0e-2
 
 # Flow properties
 # viscosity
@@ -29,11 +29,11 @@ variable 	sph_mu equal ${sph_eta}/${sph_rho}
 variable        sph_gamma equal 1
 
 # body force
-variable          gx    equal 1.5e-8
+variable          gx    equal 5.0e-5
 
 # Diffusion and Reaction constant
-variable	sph_DA equal 1.0e-8
-variable	sph_RA equal 1.0e-6
+variable	sph_DA equal 1.0e-9
+variable	sph_RA equal 1.0e-9
 
 # porosity
 variable	solid_por equal 0.4
