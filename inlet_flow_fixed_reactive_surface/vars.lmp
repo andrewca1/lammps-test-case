@@ -33,8 +33,8 @@ variable        sph_gamma equal 1
 variable          gx    equal 5.0e-5
 
 # Diffusion and Reaction constant
-variable	sph_DA equal 1.0e-9
-variable	sph_RA equal 1.0e-9
+variable	sph_DA equal 1.0e-6
+variable	sph_RA equal 1.0e-4
 
 # porosity
 variable	solid_por equal 0.4
