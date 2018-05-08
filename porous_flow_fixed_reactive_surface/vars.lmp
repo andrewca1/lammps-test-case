@@ -45,7 +45,7 @@ variable	sph_RAeff equal ${solid_por}*${sph_RA}
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 150.0
+variable 	T equal 400.0
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
 
