@@ -80,4 +80,5 @@ dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA d_dcA 
 dump_modify     dump_fix first yes
 run             ${nrun}
 
-write_dump 	all custom dump.file id type x y z vx vy vz
+# Write to restart file
+write_data	dump.data nofix
