@@ -13,13 +13,13 @@ L = 0.1
 Nh = 64.0
 h = L/Nh
 
-# 10 grains of 1.3h
-N1, r1 = 10, 1.3*h
-# 18 grains of 2.5h
-N2, r2 = 18, 2.5*h
-# 17 grains of 3.75h
-N3, r3 = 17, 3.75*h
-# Total = 77
+# 10 grains of 1*h
+N1, r1 = 24, 2.75*h
+# 18 grains of 3*h
+N2, r2 = 10, 3.00*h
+# 17 grains of 6*h
+N3, r3 = 8, 3.50*h
+# Total
 Npor = N1 + N2 + N3
 
 # Get the combined list in random order of radius

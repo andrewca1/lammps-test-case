@@ -82,7 +82,7 @@ fix 		concentration_fix all meso/concentrationA
 dump		dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_cA d_dcA vx vy vz c_rho_peratom mass
 dump_modify     dump_fix first yes
 
-variable 	nrun2 equal 20*${nrun}
+variable 	nrun2 equal 10*${nrun}
 run             ${nrun2}
 
 
