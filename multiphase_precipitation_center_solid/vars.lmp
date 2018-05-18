@@ -15,17 +15,21 @@ variable 	xconst equal 0.0*${L}
 # Particle properties
 variable 	sph_rho equal 1.0
 variable        sph_mass equal ${sph_rho}*${dx}^2
-variable	mass_thres equal 2.0*${sph_mass}
+variable        mass_thres equal 0.01*${sph_mass}
 
 # Reaction/Diffusion properties
-variable	sph_DA equal 0.1
-variable	sph_RA equal 3.80
+variable        sph_DA equal 0.1*${h}
+variable        sph_k equal 0.12
+variable        sph_kRA equal 0.24
+variable        sph_RA equal ${sph_k}/${sph_kRA}
+print           "The value for D is ${sph_DA}"
+print           "The value for R is ${sph_RA}"
 
 # Sound speed
 variable	sph_c equal 200/sqrt(${sph_rho})
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 0.1
+variable 	T equal 10.0
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
