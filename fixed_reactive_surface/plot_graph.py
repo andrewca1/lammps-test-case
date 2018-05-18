@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import itertools
 
 # Time series
-T = [0.1]
+T = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5]
 
 # Size
 h = 0.03125

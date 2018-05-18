@@ -54,20 +54,20 @@ def analytical(_X0, _t, _k, _Da, _C0, _Ceq, _r1, _r2, _nval):
     _C = _xr*0.0
     for _alpha in _alphas:
         _C -= np.pi*np.exp(-(_alpha**2)*_t*_k/(_r2*_Da))*(_Da**2)*(J(0, _alpha)**2)* \
-              B(_xr, _alpha, _r1, _r2, _Da)*(1 - _Ceq/_C0)/F(_alpha, _r1, _r2, _Da)
+              B(_xr, _alpha, _r1, _r2, _Da)*(1.0 - _Ceq/_C0)/F(_alpha, _r1, _r2, _Da)
 
     # Adding the solution
-    _C += 1.0 + (_r1/_r2)*_Da*(1 - _Ceq/_C0)*np.log(_xr/_r2)/(1 + (_r1/_r2)*_Da*np.log(_r2/_r1))
+    _C += 1.0 + (_r1/_r2)*_Da*(1.0 - _Ceq/_C0)*np.log(_xr/_r2)/(1.0 + (_r1/_r2)*_Da*np.log(_r2/_r1))
     _C = _C*_C0
 
     return _xr, _C, _alphas
 
 # Parameters
-h = 0.03125
+h = 0.025
 r1, r2 = 3.0*h, 15.0*h
 Ceq, C0 = 0.0, 1.0
 D = 1.0
-R = 8.0e-2
+k = 1.4*0.08
 
 times = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5]
 
@@ -76,12 +76,11 @@ X0 = np.arange(1.0, 60.0, 4.0)
 
 # Plot the analytical solution
 # TODO: Why the constant factor?
-k = [R*0.15, R*0.15, R*0.15, R*0.15, R*0.15, R*0.15]
 
 for i in range(len(times)):
-    Da = k[i]*r2/D
-    xr, C, alphas = analytical(X0, times[i], k[i], Da,
-                               C0, Ceq, r1, r2, 10000)
+    Da = k*r2/D
+    xr, C, alphas = analytical(X0, times[i], k, Da,
+                               C0, Ceq, r1, r2, 1000)
     plt.plot(xr/h, C, label="t={}".format(times[i]))
 
 # # SPH

@@ -25,6 +25,6 @@ variable	sph_c equal 200/sqrt(${sph_rho})
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 0.1
+variable 	T equal 0.05
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
