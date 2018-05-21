@@ -6,7 +6,7 @@ from matplotlib.patches import Circle
 from matplotlib.collections import PatchCollection
 
 # Set seed
-np.random.seed(1993)
+np.random.seed(2018)
 
 # Domain size, unit of h
 L = 0.1
