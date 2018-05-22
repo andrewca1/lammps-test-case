@@ -22,7 +22,7 @@ variable	sph_DA equal 1.5
 variable	sph_RA equal 0.80
 
 # porosity
-variable	solid_por equal 0.4
+variable	solid_por equal 0.01
 
 # Reaction/Diffusion properties in solid
 variable	sph_DAeff equal ${solid_por}*${sph_DA}
