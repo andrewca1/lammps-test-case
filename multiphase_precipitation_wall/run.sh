@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # Change directory to exe
-exedir=/home/andrew/lmpsproject/qlammps/lammps/src
+exedir=$LMP_SRC
 dname=data-wall
 mkdir -p ${dname}
 
