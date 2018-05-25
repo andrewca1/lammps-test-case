@@ -1,7 +1,9 @@
 #! /bin/bash
 
 # Change directory to exe
-exedir=/home/qth20/Documents/lammps-sph/lammps/src
+exedir=/home/andrew/lmpsproject/qlammps/lammps/src
+dname=data-wall
+mkdir -p ${dname}
 
 # lmp=${exedir}/lmp_mpi
 
@@ -9,4 +11,4 @@ exedir=/home/qth20/Documents/lammps-sph/lammps/src
 
 lmp=${exedir}/lmp_serial
 
-${lmp} -in sph_multiphase_precipitation_wall_2d.lmp 
+${lmp} -in sph_multiphase_precipitation_wall_2d.lmp -var dname ${dname}
