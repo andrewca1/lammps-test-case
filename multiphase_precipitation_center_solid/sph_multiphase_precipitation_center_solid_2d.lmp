@@ -4,6 +4,7 @@
 # contained in file dump.last, to analytic solution.
 #
 #
+log             ${dname}/log.lammps
 dimension       2
 units		si
 atom_style	meso/multiphase
@@ -34,7 +35,7 @@ set		group solid type 2 # solid is 2
 set		atom * meso/rho ${sph_rho}
 set	        atom * mass ${sph_mass}
 
-set		group liquid d_cA 1.0
+set		group liquid d_cA 0.7
 set		group solid d_cA 0.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
@@ -55,7 +56,8 @@ neighbor	0 bin
 fix             integrate_fix all meso/stationary
 fix		precipitation_fix all meso/precipitationA
 
-dump		dump_fix all custom 5 dump.difrxn.rand.p id type x y z d_cA d_dmA mass
+#dump		dump_fix all custom 5 dump.difrxn.rand.p id type x y z d_cA d_dmA mass
+dump            dump_fix all custom ${Nfreq} ${dname}/dump.*.dat  id type x y z d_mA d_cA
 dump_modify     dump_fix first yes
 run             ${nrun}
 undump          dump_fix

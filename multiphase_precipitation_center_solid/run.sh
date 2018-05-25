@@ -2,6 +2,8 @@
 
 # Change directory to exe
 exedir=$LMP_SRC
+dname=data-wall
+mkdir -p ${dname}
 
 # lmp=${exedir}/lmp_mpi
 
@@ -9,4 +11,4 @@ exedir=$LMP_SRC
 
 lmp=${exedir}/lmp_serial
 
-${lmp} -in sph_multiphase_precipitation_center_solid_2d.lmp 
+${lmp} -in sph_multiphase_precipitation_center_solid_2d.lmp -var dname ${dname}

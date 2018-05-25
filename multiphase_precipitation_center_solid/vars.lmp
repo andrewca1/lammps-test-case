@@ -20,7 +20,7 @@ variable        mass_thres equal ${sph_mass}
 # Reaction/Diffusion properties
 variable        sph_DA equal 0.1*${h}
 variable        sph_k equal 50.0
-variable        sph_kRA equal 0.01
+variable        sph_kRA equal 0.1
 variable        sph_RA equal ${sph_k}/${sph_kRA}
 print           "The value for D is ${sph_DA}"
 print           "The value for R is ${sph_RA}"
@@ -30,6 +30,9 @@ variable	sph_c equal 200/sqrt(${sph_rho})
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 0.01
+variable 	T equal 0.1
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
+
+# Printout frequency
+variable          Nfreq equal 100
