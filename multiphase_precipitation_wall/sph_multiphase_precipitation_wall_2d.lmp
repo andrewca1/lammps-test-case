@@ -4,6 +4,7 @@
 # contained in file dump.last, to analytic solution.
 #
 #
+log             ${dname}/log.lammps
 dimension       2
 units		si
 atom_style	meso/multiphase
@@ -15,10 +16,11 @@ fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_mA d_dmA d_m
 include		vars.lmp
 
 lattice		sq ${dx} origin 0.5 0.5 0
-region		box block 0 ${L} 0 ${L} 0 ${dx} units box
+region		box block 0 ${L_x} 0 ${L_y} 0 ${dx} units box
 create_box	2 box
-# create_atoms 	1 box
-create_atoms 	1 random 10000 12345 NULL
+create_atoms 	1 box
+#create_atoms 	1 random 10000 12345 NULL
+#displace_atoms  all random 0.2 0.2 0 13245
 
 # Create left and right region
 region 	      rliquid block ${dx} ${xmid} EDGE EDGE EDGE EDGE units box
@@ -37,7 +39,7 @@ set		group solid type 2 # solid is 2
 set		atom * meso/rho ${sph_rho}
 set	        atom * mass ${sph_mass}
 
-set		group liquid d_cA 0.3
+set		group liquid d_cA 0.08
 set		group solid d_cA 0.0
 set		atom * d_dcA 0.0
 set		atom * d_dmA 0.0
@@ -58,9 +60,12 @@ neighbor	0 bin
 fix             integrate_fix all meso/stationary
 fix		sprecipitation_fix solid meso/precipitationA
 fix		lprecipitation_fix liquid meso/precipitationA
-fix		constant_concentration constconc meso/constantconcentrationA 1.0
+fix		constant_concentration constconc meso/constantconcentrationA 0.8
 
-dump		dump_fix all custom 1 dump.difrxn.rand.serial id type x y z d_cA d_dcA d_mA d_dmA 
+#dump		dump_fix all custom 1 dump.difrxn.rand.serial id type x y z d_cA d_dcA d_mA d_dmA 
+#dump            dump_fix all custom 1 dum.vp.d${sph_DA}.r${sph_RA} id type x y z d_mA d_cA
+dump            dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_mA d_cA
 dump_modify     dump_fix first yes
-run             ${nrun}
+
+run             10000 #${nrun}
 undump          dump_fix

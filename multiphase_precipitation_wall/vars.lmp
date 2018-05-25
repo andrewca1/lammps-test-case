@@ -1,13 +1,14 @@
 # Some dimensional parameters
-variable	L equal 1.0
-variable	neq equal 16
-variable	xmid equal 0.8*${L}
+variable        L_x equal 1.0
+variable        L_y equal 0.5*${L_x}
+variable	neq equal 32
+variable	xmid equal 0.95*${L_x}
 
-variable        h equal ${L}/${neq}
+variable        h equal ${L_x}/${neq}
 variable        dx equal ${h}/4.0
 variable	d equal 2.0*${dx}
 
-variable 	xconst equal 0.0*${L}
+variable 	xconst equal 0.0*${L_x}
 
 # Particle properties
 variable 	sph_rho equal 1.0
@@ -15,10 +16,10 @@ variable        sph_mass equal ${sph_rho}*${dx}^2
 variable	mass_thres equal 0.01*${sph_mass}
 
 # Reaction/Diffusion properties
-variable	sph_DA equal 0.1*${h}
-variable	sph_k equal 12.5
-variable	sph_kRA equal 0.24
-variable	sph_RA equal ${sph_k}/${sph_kRA}
+variable	sph_DA equal 1.0*${h}
+variable	sph_k equal 0.001
+variable	sph_kRA equal 0.000004
+variable	sph_RA equal 10 #${sph_k}/${sph_kRA}
 print		"The value for D is ${sph_DA}"
 print		"The value for R is ${sph_RA}"
 
@@ -27,6 +28,10 @@ variable	sph_c equal 200/sqrt(${sph_rho})
 
 # Get timestep
 include		settimestep.lmp
-variable 	T equal 0.002
+variable 	T equal 0.01
 timestep	${dt}
 variable 	nrun equal round(${T}/${dt})
+
+# Printout frequency
+variable          Nfreq equal 1000
+
