@@ -1,0 +1,72 @@
+# mesoscopic heat conduction
+# heat flow from hot right region to cold left region
+# compare the temperature profile at the end opf the simulation,
+# contained in file dump.last, to analytic solution.
+#
+#
+log             ${dname}/log.lammps
+dimension       2
+units		si
+atom_style	meso/multiphase
+boundary        p p p 
+
+# Adding a new property - need to be added before simulation box
+fix   	        prop all property/atom d_cA d_dcA d_DA d_cAeq d_RA d_mA d_dmA d_mAthres ghost yes
+
+include		vars.lmp
+
+lattice		sq ${dx} origin 0.5 0.5 0
+region		box block 0 ${L_x} 0 ${L_y} 0 ${dx} units box
+create_box	2 box
+create_atoms 	1 box
+#create_atoms 	1 random 10000 12345 NULL
+displace_atoms  all random 0.2 0.2 0 13245
+
+# Create left and right region
+region 	      rliquid block ${dx} ${xmid} EDGE EDGE EDGE EDGE units box
+region 	      rsolid block ${xmid} EDGE EDGE EDGE EDGE EDGE units box
+region 	      solidtri1 cone x ${tri1_mid} 0.0 ${tri1_radlo} ${tri1_radhi} ${tri1_lo} ${tri1_hi} units box
+region	      rconstconc block EDGE ${dx} EDGE EDGE EDGE EDGE units box
+
+group	      solid region rsolid
+group	      solid region solidtri1
+group	      liquid region rliquid
+group	      constconc region rconstconc
+
+# Setting the properties for the region
+set		group liquid type 1 # liquid is 1
+set		group constconc type 1 # liquid is 1
+set		group solid type 2 # solid is 2
+
+set		atom * meso/rho ${sph_rho}
+set	        atom * mass ${sph_mass}
+
+set		group liquid d_cA 0.0
+set		group solid d_cA 0.0
+set		atom * d_dcA 0.0
+set		atom * d_dmA 0.0
+set		atom * d_mA 0.0
+set		atom * d_DA ${sph_DA} # diffusion coefficient
+set		atom * d_cAeq 0.01 # equilibrium concentration
+set		atom * d_RA ${sph_RA} # Interacting between solid and liquid
+set		atom * d_mAthres ${mass_thres} # threshold mass to convert to solid
+
+pair_style      sph/concAsurfacereaction/multiphase
+#               i j cutoff
+# There seems to be problem with large value of either constants
+# TODO: Figure it out
+pair_coeff      * * 	      ${h} ${d}
+
+timestep        ${dt}
+neighbor	0 bin
+fix             integrate_fix all meso/stationary
+fix		sprecipitation_fix solid meso/precipitationA
+fix		lprecipitation_fix liquid meso/precipitationA
+fix		constant_concentration constconc meso/constantconcentrationA 0.8
+
+#dump            dump_fix all custom 1 dum.vp.d${sph_DA}.r${sph_RA} id type x y z d_mA d_cA
+dump            dump_fix all custom ${Nfreq} ${dname}/dump.*.dat id type x y z d_mA d_cA
+dump_modify     dump_fix first yes
+
+run             10000 #${nrun}
+undump          dump_fix

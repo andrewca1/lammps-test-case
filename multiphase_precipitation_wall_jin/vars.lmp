@@ -1,0 +1,42 @@
+# Some dimensional parameters
+variable        L_x equal 1.0
+variable        L_y equal 1.0*${L_x}
+variable	neq equal 36
+variable	xmid equal 0.95*${L_x}
+
+variable        h equal ${L_x}/${neq}
+variable        dx equal ${h}/4.0
+variable	d equal 2.0*${dx}
+
+# Parameters for triangles
+variable     	tri1_mid equal 0.5*${L_y}
+variable     	tri1_radlo equal 0.0
+variable     	tri1_radhi equal 0.05*${L_y}
+variable     	tri1_lo equal ${xmid}-0.05
+variable     	tri1_hi equal ${xmid}
+
+# Particle properties
+variable 	sph_rho equal 1.0
+variable        sph_mass equal ${sph_rho}*${dx}^2
+variable	mass_thres equal 0.01*${sph_mass}
+
+# Reaction/Diffusion properties
+variable	sph_DA equal 1.0*${h}
+variable	sph_k equal 0.001
+variable	sph_kRA equal 0.000004
+variable	sph_RA equal 10 #${sph_k}/${sph_kRA}
+print		"The value for D is ${sph_DA}"
+print		"The value for R is ${sph_RA}"
+
+# Sound speed
+variable	sph_c equal 200/sqrt(${sph_rho})
+
+# Get timestep
+include		settimestep.lmp
+variable 	T equal 0.001
+timestep	${dt}
+variable 	nrun equal round(${T}/${dt})
+
+# Printout frequency
+variable          Nfreq equal 100
+
